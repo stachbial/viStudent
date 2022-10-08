@@ -10,6 +10,8 @@ use opencv::{
     videoio,
 };
 
+// use core::str::Bytes;
+
 fn runopencvexample() -> opencv::Result<()> {
     let window = "video capture";
     highgui::named_window(window, 1)?;
@@ -41,6 +43,14 @@ fn greet(name: &str) -> String {
     // runopencv().unwrap();
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
+
+// #[tauri::command]
+// fn test(img: &Arc<u8>, lenght: &u8) -> Arc<u8> {
+//     // runopencv().unwrap();
+
+
+//     format!("Hello, {}! You've been greeted from Rust!")
+// }
 
 fn main() {
     tauri::Builder::default()
