@@ -11,35 +11,36 @@ import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
 import ImageSearchOutlinedIcon from "@mui/icons-material/ImageSearchOutlined";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/tauri";
 
 const MediaInput = () => {
   const [uploadedImageData, setUploadedImageData] = useState<string>();
+
+  const testRustInvoke = async (params: { img: string }) => {
+    const msgFromRust = await invoke("test", params);
+    return msgFromRust as string;
+  };
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     event.stopPropagation();
     event.preventDefault();
 
-    const test = 8;
-    const u8test = new Uint8Array(test);
-    u8test[0] = test;
-    console.log(test.toString());
-
     if (event.target.files && event.target.files[0]) {
-      const test = event.target.files[0];
-      // let imageUrl = window.URL.createObjectURL(test);
-      // setUploadedImageData(imageUrl);
-
       const reader = new FileReader();
       reader.readAsArrayBuffer(event.target.files[0]);
 
-      console.log(reader);
-
-      // const data = new Uint8Array(ev.target.result);
-      reader.onload = (ev) => {
+      reader.onload = async (ev) => {
         const u8data = new Uint8Array(ev.target.result as ArrayBuffer);
-        const blob = new Blob([u8data]);
 
+        const rustString = await testRustInvoke({ img: u8data.toString() });
+        console.log(rustString);
+        const arrayFromRustStr = rustString
+          .replace("[", "")
+          .replace("]", "")
+          .split(",")
+          .map((el) => parseInt(el));
+        const u8fromRustStr = new Uint8Array(arrayFromRustStr);
+        const blob = new Blob([u8fromRustStr]);
         let imageUrl = window.URL.createObjectURL(blob);
         setUploadedImageData(imageUrl);
       };
@@ -49,12 +50,14 @@ const MediaInput = () => {
   return (
     <StyledModuleWrapper item sm>
       <StyledContentWrapper>
-        <Image
-          width={300}
-          height={300}
-          objectFit="cover"
-          src={uploadedImageData}
-        />
+        {uploadedImageData && (
+          <Image
+            width={300}
+            height={300}
+            objectFit="cover"
+            src={uploadedImageData}
+          />
+        )}
         <AttachFileOutlinedIcon sx={{ fontSize: 80 }} />
         <StyledInputControlsWrapper>
           <Button
