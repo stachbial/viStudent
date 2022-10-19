@@ -1,18 +1,9 @@
-import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "../theme/theme";
-import AppContainer from "../components/layout/AppContainer";
-import ControlPanel from "../modules/control/ControlPanel";
-import MediaInput from "../modules/media/MediaInput";
+import HomeModule from "../modules/HomeModule";
 
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <AppContainer>
-        <ControlPanel />
-        <MediaInput />
-      </AppContainer>
-    </ThemeProvider>
-  );
+// import {StyledLinkContainer} from
+
+function HomePage() {
+  return <HomeModule />;
 }
 
-export default App;
+export default HomePage;

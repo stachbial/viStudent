@@ -1,48 +1,55 @@
 import React, { useState, useEffect } from "react";
+import { ImageProcessingContext } from "./ImageProcessingContext";
 import {
-  ImageProcessingContext,
-  initialCurrentImageState,
-} from "./ImageProcessingContext";
-import {
-  processedImageDataType,
-  imageActionParamsType,
-  imageProcessingActionType,
+  processedImageData,
+  imageActionParams,
+  imageProcessingAction,
 } from "../types/ImageProcessingContextTypes";
 
-const initialProcessedImageDataState: processedImageDataType = {
-  currentImage: initialCurrentImageState,
-  previousImageStates: [],
-};
+import { dispatchRustImageOperation } from "../utils/dispatchRustImageOperation";
+import {
+  formatRustImageResponse,
+  getURLfromUint8Array,
+} from "../utils/dataFormattingHelpers";
 
 export const ImageProcessingContextProvider = ({ children }) => {
-  const [processedImageData, setProcessedImageData] = useState(
-    initialProcessedImageDataState
-  );
+  const [processedImageData, setProcessedImageData] =
+    useState<processedImageData>({
+      currentImageURL: null,
+      currentImageData: null,
+      previousImageStatesData: [],
+    });
   const [imageProcessingAction, setImageProcessingAction] =
-    useState<imageProcessingActionType>({
+    useState<imageProcessingAction>({
       imageActionParams: null,
       loadingState: "EMPTY",
     });
 
   const handleUndoProcessImage = () => {
     setProcessedImageData((prev) => {
-      const previousImageStates = prev.previousImageStates;
+      const previousImageStatesData = prev.previousImageStatesData;
 
-      if (previousImageStates.length !== 0) {
-        const lastImageState =
-          previousImageStates[previousImageStates.length - 1];
-        const slicedPreviousImageStates = previousImageStates.slice(0, -1);
+      if (previousImageStatesData.length !== 0) {
+        const lastImageData =
+          previousImageStatesData[previousImageStatesData.length - 1];
+        const slicedPreviousImageStatesData = previousImageStatesData.slice(
+          0,
+          -1
+        );
+
+        const lastImageUrl = getURLfromUint8Array(lastImageData);
 
         return {
-          currentImage: lastImageState,
-          previousImageStates: slicedPreviousImageStates,
+          currentImageURL: lastImageUrl,
+          currentImageData: lastImageData,
+          previousImageStatesData: slicedPreviousImageStatesData,
         };
       }
       return prev;
     });
   };
 
-  const handleImageProcessing = (params: imageActionParamsType) => {
+  const handleImageProcessing = (params: imageActionParams) => {
     setImageProcessingAction({
       imageActionParams: params,
       loadingState: "LOADING",
@@ -50,14 +57,37 @@ export const ImageProcessingContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    const handleRustImageProcessing = async () => {
+      try {
+        const rustImageData = await dispatchRustImageOperation(
+          imageProcessingAction.imageActionParams
+        );
 
-    
+        const { uint8imageData, imageUrl } =
+          formatRustImageResponse(rustImageData);
+
+        setProcessedImageData((prev) => {
+          return {
+            currentImageURL: imageUrl,
+            currentImageData: uint8imageData,
+            previousImageStatesData: [
+              ...prev.previousImageStatesData,
+              prev.currentImageData,
+            ],
+          };
+        });
+      } catch {
+        console.log(`error while handling rust img operation`);
+      }
+    };
+
+    handleRustImageProcessing();
   }, [imageProcessingAction]);
 
   return (
     <ImageProcessingContext.Provider
       value={{
-        currentImage: processedImageData.currentImage,
+        currentImageURL: processedImageData.currentImageURL,
         imageLoadingState: imageProcessingAction.loadingState,
         processImage: handleImageProcessing,
         undoProcessImage: handleUndoProcessImage,

@@ -1,31 +1,30 @@
-export type currentImageType = ArrayBuffer | null;
+export type currentImageData = Uint8Array | null;
 
-export type previousImageStatesType = ArrayBuffer[];
+export type currentImageURL = string | null;
 
-export type processedImageDataType = {
-  currentImage: currentImageType;
-  previousImageStates: previousImageStatesType;
+export type previousImageStatesData = Uint8Array[];
+
+export type processedImageData = {
+  currentImageURL: currentImageURL;
+  currentImageData: currentImageData;
+  previousImageStatesData: previousImageStatesData;
 };
 
-export type imageActionParamsType = {
+export type imageActionParams = {
   type: string;
   payload?: any;
 } | null;
 
-export type imageActionLoadingStateType =
-  | "LOADING"
-  | "LOADED"
-  | "EMPTY"
-  | "ERROR";
+export type imageActionLoadingState = "LOADING" | "LOADED" | "EMPTY" | "ERROR";
 
-export type imageProcessingActionType = {
-  imageActionParams: imageActionParamsType;
-  loadingState: imageActionLoadingStateType;
+export type imageProcessingAction = {
+  imageActionParams: imageActionParams;
+  loadingState: imageActionLoadingState;
 };
 
-export type ImageProcessingContextType = {
-  currentImage: currentImageType;
-  imageLoadingState: imageActionLoadingStateType;
-  processImage: (imageActionParams: imageActionParamsType) => void;
+export type ImageProcessingCtx = {
+  currentImageURL: currentImageURL;
+  imageLoadingState: imageActionLoadingState;
+  processImage: (imageActionParams: imageActionParams) => void;
   undoProcessImage: () => void;
 };

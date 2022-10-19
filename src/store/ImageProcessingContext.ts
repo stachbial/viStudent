@@ -1,19 +1,16 @@
 import { createContext } from "react";
 import {
-  currentImageType,
-  imageActionParamsType,
-  ImageProcessingContextType,
+  imageActionParams,
+  ImageProcessingCtx,
 } from "../types/ImageProcessingContextTypes";
 
-export const initialCurrentImageState: currentImageType = null;
-
-const initialImageProcessingContextState: ImageProcessingContextType = {
-  currentImage: initialCurrentImageState,
+const initialImageProcessingContextState: ImageProcessingCtx = {
+  currentImageURL: null,
   imageLoadingState: "EMPTY",
-  processImage: (imageActionParams: imageActionParamsType) => {},
+  processImage: (imageActionParams: imageActionParams) => {},
   undoProcessImage: () => {},
 };
 
-export const ImageProcessingContext = createContext<ImageProcessingContextType>(
+export const ImageProcessingContext = createContext<ImageProcessingCtx>(
   initialImageProcessingContextState
 );
