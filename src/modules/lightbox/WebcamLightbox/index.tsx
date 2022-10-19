@@ -24,7 +24,7 @@ import {
 } from "../styled";
 import Loader from "../../../components/Loader";
 
-const WebcamPreviewModal = ({ open, onBackdropClose, onConfirm }) => {
+const WebcamLightbox = ({ open, onBackdropClose, onConfirm }) => {
   const router = useRouter();
   const { processImage } = useContext(ImageProcessingContext);
   const [deviceId, setDeviceId] = useState<string | null>(null);
@@ -164,4 +164,4 @@ const WebcamPreviewModal = ({ open, onBackdropClose, onConfirm }) => {
   );
 };
 
-export default WebcamPreviewModal;
+export default WebcamLightbox;

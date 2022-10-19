@@ -9,8 +9,8 @@ import { Grid } from "@mui/material";
 import ImageCardsWrapper from "../../components/ImageCardsWrapper";
 import ImageCard from "../../components/ImageCard";
 import ImageInput from "../../components/ImageInput";
-import ImagePreviewModal from "../mediaPreviewModals/ImagePreviewModal";
-import WebcamPreviewModal from "../mediaPreviewModals/WebcamPreviewModal";
+import ImageChoiceLightbox from "../lightbox/ImageChoiceLightbox";
+import WebcamLightbox from "../lightbox/WebcamLightbox";
 
 // TODO: rozkminic czy nie sciagnac stany z webview modal i uzywac contextu tylko tu
 
@@ -67,14 +67,14 @@ const LoadImageModule = () => {
           />
         </Grid>
       </ImageCardsWrapper>
-      <ImagePreviewModal
+      <ImageChoiceLightbox
         open={chosenImage !== null}
         onBackdropClose={handleCloseImagePreview}
         src={chosenImage?.imageUrl ? chosenImage.imageUrl : ""}
         onConfirm={handleConfirmImage}
         onSetNewImage={setChosenImage}
       />
-      <WebcamPreviewModal
+      <WebcamLightbox
         open={showWebcamPreview}
         onBackdropClose={handleCloseWebcamPreview}
         onConfirm={() => {}}

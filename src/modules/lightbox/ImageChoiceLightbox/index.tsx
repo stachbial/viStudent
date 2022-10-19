@@ -11,7 +11,7 @@ import {
   StyledExitButtonWrapper,
 } from "../styled";
 
-const ImagePreviewModal = ({
+const ImageChoiceLightbox = ({
   open,
   onBackdropClose,
   src,
@@ -60,7 +60,7 @@ const ImagePreviewModal = ({
   );
 };
 
-export default ImagePreviewModal;
+export default ImageChoiceLightbox;
 
 // <StyledModuleWrapper item sm>
 //   <StyledContentWrapper>
