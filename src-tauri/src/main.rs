@@ -46,7 +46,7 @@ fn greet(name: &str) -> String {
 }
 
 
-fn convert_str_to_u8vector(str: &str) -> Vec<u8> {
+fn convert_str_to_u8vector(str: &str) -> opencv::types::VectorOfu8 {
     // runopencvexample().unwrap();
     let split = str.split(",");
     let string_vec = split.collect::<Vec<&str>>();
@@ -57,16 +57,16 @@ fn convert_str_to_u8vector(str: &str) -> Vec<u8> {
         u8vec.push(el)
     }
 
-    return u8vec;
-}
+    let opencv_vector = opencv::types::VectorOfu8::from_iter(u8vec);
+    return opencv_vector;
+
+}   
 
 #[tauri::command]
-fn test(img: &str) -> String {
-    let u8vec = convert_str_to_u8vector(img);
-
+fn load_image(img: &str) -> String {
+    let image_vector = convert_str_to_u8vector(img);
     
-    let vector = opencv::types::VectorOfu8::from_iter(u8vec);
-    let mat = opencv::imgcodecs::imdecode(&vector, IMREAD_UNCHANGED).unwrap();
+    let mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
 
     let mut buffer = opencv::types::VectorOfu8::new();
     let params =  opencv::types::VectorOfi32::new();
@@ -78,7 +78,7 @@ fn test(img: &str) -> String {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, test])
+        .invoke_handler(tauri::generate_handler![greet, load_image])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

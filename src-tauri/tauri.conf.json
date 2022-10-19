@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "gazo-vision",
+    "productName": "viSudent",
     "version": "0.0.0"
   },
   "tauri": {
@@ -56,10 +56,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 760,
         "resizable": true,
-        "title": "gazo-vision",
-        "width": 800
+        "title": "viSudent",
+        "width": 1280
       }
     ]
   }
