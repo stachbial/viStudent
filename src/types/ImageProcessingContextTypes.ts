@@ -1,8 +1,11 @@
-export type currentImageData = Uint8Array | null;
+
+export type imageData = Uint8Array;
+
+export type currentImageData = imageData | null;
 
 export type currentImageURL = string | null;
 
-export type previousImageStatesData = Uint8Array[];
+export type previousImageStatesData = imageData[];
 
 export type processedImageData = {
   currentImageURL: currentImageURL;
@@ -15,16 +18,10 @@ export type imageActionParams = {
   payload?: any;
 } | null;
 
-export type imageActionLoadingState = "LOADING" | "LOADED" | "EMPTY" | "ERROR";
-
-export type imageProcessingAction = {
-  imageActionParams: imageActionParams;
-  loadingState: imageActionLoadingState;
-};
-
 export type ImageProcessingCtx = {
   currentImageURL: currentImageURL;
-  imageLoadingState: imageActionLoadingState;
+  isLoading: boolean;
+  canUndo: boolean;
   processImage: (imageActionParams: imageActionParams) => void;
   undoProcessImage: () => void;
 };
