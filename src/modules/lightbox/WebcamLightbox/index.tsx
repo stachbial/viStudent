@@ -1,16 +1,21 @@
 import { useState, useCallback, useRef, useContext } from "react";
 import { useRouter } from "next/router";
-import { routes } from "../../../routes";
 import { ImageProcessingContext } from "../../../store/ImageProcessingContext";
 import { Button, Typography } from "@mui/material";
-import ChooseCameraDialog from "../../../components/dialogs/ChooseCameraDialog";
 import Webcam from "react-webcam";
 import Image from "next/image";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import LoopIcon from "@mui/icons-material/Loop";
-import { getImageDataFromBuffer } from "../../../utils/dataFormattingHelpers";
+import ChooseCameraDialog from "../../../components/dialogs/ChooseCameraDialog";
+import Loader from "../../../components/Loader";
+import { routes } from "../../../routes";
+import { imageAction } from "../../../utils/imageActions";
+import {
+  getImageDataFromBuffer,
+  serializeImageData,
+} from "../../../utils/dataFormattingHelpers";
 import {
   currentImageData,
   currentImageURL,
@@ -22,7 +27,6 @@ import {
   StyledTitle,
   StyledExitButtonWrapper,
 } from "../styled";
-import Loader from "../../../components/Loader";
 
 const WebcamLightbox = ({ open, onBackdropClose, onConfirm }) => {
   const router = useRouter();
@@ -75,9 +79,9 @@ const WebcamLightbox = ({ open, onBackdropClose, onConfirm }) => {
 
   const handleConfirmImage = () => {
     processImage({
-      type: "load_image",
+      type: imageAction.LOAD_IMAGE,
       payload: {
-        img: screenShotImageData.screenshotData,
+        img: serializeImageData(screenShotImageData.screenshotData),
       },
     });
 

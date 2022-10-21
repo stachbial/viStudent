@@ -1,16 +1,18 @@
 import { useState, useContext } from "react";
 import { useRouter } from "next/router";
-import { routes } from "../../routes";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
+import { Grid } from "@mui/material";
 import pickFileImage from "../../assets/images/pick-file.jpg";
 import takePhotoImage from "../../assets/images/take-photo.jpg";
 import Page from "../../components/Page";
-import { Grid } from "@mui/material";
 import ImageCardsWrapper from "../../components/ImageCardsWrapper";
 import ImageCard from "../../components/ImageCard";
 import ImageInput from "../../components/ImageInput";
 import ImageChoiceLightbox from "../lightbox/ImageChoiceLightbox";
 import WebcamLightbox from "../lightbox/WebcamLightbox";
+import { routes } from "../../routes";
+import { serializeImageData } from "../../utils/dataFormattingHelpers";
+import { imageAction } from "../../utils/imageActions";
 
 // TODO: rozkminic czy nie sciagnac stany z webview modal i uzywac contextu tylko tu
 
@@ -37,9 +39,9 @@ const LoadImageModule = () => {
 
   const handleConfirmImage = () => {
     processImage({
-      type: "load_image",
+      type: imageAction.LOAD_IMAGE,
       payload: {
-        img: chosenImage.imageData,
+        img: serializeImageData(chosenImage.imageData),
       },
     });
 

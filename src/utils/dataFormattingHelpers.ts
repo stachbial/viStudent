@@ -13,7 +13,11 @@ export const getImageDataFromBuffer = (buffer: ArrayBuffer) => {
   };
 };
 
-export const formatRustImageResponse = (rustImageData: string) => {
+export const serializeImageData = (uint8imageData: Uint8Array) => {
+  return uint8imageData.toString();
+};
+
+export const deserializeRustImageResponse = (rustImageData: string) => {
   const arrayFromRustStr = rustImageData
     .replace("[", "")
     .replace("]", "")

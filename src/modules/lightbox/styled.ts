@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Grid, Modal } from "@mui/material";
+import { Modal } from "@mui/material";
 import { theme } from "../../theme/theme";
 export const StyledModal = styled(Modal)`
   display: flex;

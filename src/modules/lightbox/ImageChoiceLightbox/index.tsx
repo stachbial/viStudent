@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { Button, Typography } from "@mui/material";
-import ImageInput from "../../../components/ImageInput";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import ImageInput from "../../../components/ImageInput";
 import {
   StyledModal,
   StyledMediaWrapper,
@@ -61,23 +61,3 @@ const ImageChoiceLightbox = ({
 };
 
 export default ImageChoiceLightbox;
-
-// <StyledModuleWrapper item sm>
-//   <StyledContentWrapper>
-//     {currentImageURL && (
-//       <Image
-//         width={300}
-//         height={300}
-//         objectFit="cover"
-//         src={currentImageURL}
-//       />
-//     )}
-//     <AttachFileOutlinedIcon sx={{ fontSize: 80 }} />
-//     <StyledInputControlsWrapper>
-//       <ImageInputButton text="Dodaj zdjęcie" />
-//       <Button variant="contained" startIcon={<CameraAltOutlinedIcon />}>
-//         Zrób zdjęcie
-//       </Button>
-//     </StyledInputControlsWrapper>
-//   </StyledContentWrapper>
-// </StyledModuleWrapper>
