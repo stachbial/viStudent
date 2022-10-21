@@ -70,7 +70,7 @@ fn load_image(img: &str) -> String {
 
     let mut buffer = opencv::types::VectorOfu8::new();
     let params =  opencv::types::VectorOfi32::new();
-    let _test = opencv::imgcodecs::imencode(".jpg", &mat, &mut buffer, &params ).unwrap();
+    let _test = opencv::imgcodecs::imencode(".png", &mat, &mut buffer, &params ).unwrap();
     let output  = buffer.as_slice();
 
     format!("{:?}", output)
