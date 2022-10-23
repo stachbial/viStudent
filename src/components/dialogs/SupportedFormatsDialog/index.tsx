@@ -16,7 +16,7 @@ const SupportedFormatsDialog = ({ open, onClose }) => {
       <Grid container spacing={2}>
         {supportedImageExtensions.map((item) => {
           return (
-            <Grid item>
+            <Grid item key={item}>
               <StyledExtensionCard>{`.${item}`}</StyledExtensionCard>
             </Grid>
           );
