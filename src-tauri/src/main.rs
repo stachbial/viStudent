@@ -4,14 +4,13 @@
 )]
 
 use opencv::{
-    core,
+    core::{ ROTATE_90_COUNTERCLOCKWISE},
     highgui,
     prelude::*,
-    videoio, imgcodecs::IMREAD_UNCHANGED,
+    videoio, imgcodecs::{IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT},
 };
 
 
-// use core::str::Bytes;
 
 // fn runopencvexample() -> opencv::Result<()> {
 //     let window = "video capture";
@@ -37,48 +36,65 @@ use opencv::{
 //     }
 //     Ok(())
 // }
+// runopencvexample().unwrap();
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    // runopencv().unwrap();
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
 
-
-fn convert_str_to_u8vector(str: &str) -> opencv::types::VectorOfu8 {
-    // runopencvexample().unwrap();
-    let split = str.split(",");
-    let string_vec = split.collect::<Vec<&str>>();
-    let mut u8vec = Vec::new();
-
-    for i in string_vec {
-        let el = i.parse::<u8>().unwrap();
-        u8vec.push(el)
-    }
-
-    let opencv_vector = opencv::types::VectorOfu8::from_iter(u8vec);
-    return opencv_vector;
-
+fn deserialize_img_string(img_str: &str) -> opencv::types::VectorOfu8 {
+    return  img_str
+        .split(",")
+        .filter_map(|el| el.parse::<u8>().ok())
+        .collect();
 }   
 
 #[tauri::command]
 fn load_image(img: &str) -> String {
-    let image_vector = convert_str_to_u8vector(img);
+    let fn_start = std::time::Instant::now();
     
-    let mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
+    let image_vector = deserialize_img_string(img);
 
-    let mut buffer = opencv::types::VectorOfu8::new();
-    let params =  opencv::types::VectorOfi32::new();
-    let _test = opencv::imgcodecs::imencode(".png", &mat, &mut buffer, &params ).unwrap();
-    let output  = buffer.as_slice();
+    let mut mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
+
+    let mut output = opencv::types::VectorOfu8::new();
+    let output_params =  opencv::types::VectorOfi32::new();
+    opencv::imgcodecs::imencode(".png", &mat, &mut output, &output_params ).unwrap();
+     mat.release().unwrap();
+
+    let  fn_duration = fn_start.elapsed();
+    println!("Time elapsed in load_image() is: {:?}", fn_duration);
+     
+    format!("{:?}", output)
+}
+
+#[tauri::command]
+fn rotate(img: &str) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
+
+    let mut buff_mat = opencv::core::Mat::default();
+    opencv::core::rotate(&mat, &mut buff_mat, ROTATE_90_COUNTERCLOCKWISE).unwrap();
+
+    let mut output = opencv::types::VectorOfu8::new();
+    let mut output_params =  opencv::types::VectorOfi32::new();
+    output_params.push(
+        IMWRITE_PNG_STRATEGY_DEFAULT);
+
+    opencv::imgcodecs::imencode(".png", &buff_mat, &mut output, &output_params ).unwrap();
+    mat.release().unwrap();
+    buff_mat.release().unwrap();
+    
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in rotate() is: {:?}", fn_duration);
 
     format!("{:?}", output)
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, load_image])
+        .invoke_handler(tauri::generate_handler![ load_image, rotate])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
