@@ -1,12 +1,7 @@
-import ControlPanel from "../modules/ControlPanel";
+import ImageProcessingModule from "../modules/ImageProcessingModule";
 
 const imageProcessingPage = () => {
-  return (
-    <>
-      <ControlPanel />
-      imageProcessingPage
-    </>
-  );
+  return <ImageProcessingModule />;
 };
 
 export default imageProcessingPage;
