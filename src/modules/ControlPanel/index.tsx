@@ -2,8 +2,8 @@ import { useState, useCallback } from "react";
 import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ControlDrawer from "../ControlDrawer";
-import NormalizationModule from "../NormalizationModule";
-import { IMG_PROC_MODULES } from "../../utils/imgProcModules";
+import NormalizationPanel from "../NormalizationPanel";
+import { IMG_PROC_MODULES } from "../../utils/imgProcConstants";
 import {
   StyledWrapper,
   StyledBackground,
@@ -49,7 +49,7 @@ const ControlPanel = () => {
         />
         <StyledModuleContainer>
           {displayedModule === IMG_PROC_MODULES.NORMALIZATION && (
-            <NormalizationModule />
+            <NormalizationPanel />
           )}
         </StyledModuleContainer>
       </StyledBackground>

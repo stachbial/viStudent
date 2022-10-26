@@ -28,6 +28,8 @@ export const StyledBackground = styled("div")`
 `;
 
 export const StyledModuleContainer = styled("div")`
-  width: 100%;
-  padding: 36px 36px;
+  padding: 16px 84px 16px 84px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;

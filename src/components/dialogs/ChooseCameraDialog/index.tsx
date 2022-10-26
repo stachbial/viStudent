@@ -44,6 +44,7 @@ const ChooseCameraDialog = ({ open, onClose, onConfirmDevice }) => {
 
   useEffect(() => {
     // TODO: flashing error msg after setting media devices tu null and opening again
+    // TODO: secure case when video access denied
     if (open) handleVideoDevices();
   }, [open]);
 

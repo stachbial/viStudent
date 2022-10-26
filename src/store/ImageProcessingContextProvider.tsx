@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { ImageProcessingContext } from "./ImageProcessingContext";
 import { dispatchRustImageOperation } from "../utils/dispatchRustImageOperation";
+import { IMG_PROC_METHODS } from "../utils/imgProcConstants";
 import {
   serializeImageData,
   deserializeRustImageResponse,
@@ -10,7 +11,6 @@ import {
   processedImageData,
   imageActionParams,
 } from "../types/ImageProcessingContextTypes";
-import { imageAction } from "../utils/imageActions";
 
 export const ImageProcessingContextProvider = ({ children }) => {
   const [processedImageData, setProcessedImageData] =
@@ -56,7 +56,7 @@ export const ImageProcessingContextProvider = ({ children }) => {
     (params: imageActionParams) => {
       // providing currentImageData if not loading new image
       const payload =
-        params.type === imageAction.LOAD_IMAGE
+        params.type === IMG_PROC_METHODS.LOAD_IMAGE
           ? params?.payload
           : {
               ...params?.payload,
@@ -72,36 +72,45 @@ export const ImageProcessingContextProvider = ({ children }) => {
   );
 
   useEffect(() => {
-    const handleRustImageProcessing = async () => {
-      try {
-        const rustImageData = await dispatchRustImageOperation(
-          currentImageActionParams
-        );
+    if (currentImageActionParams !== null) {
+      const handleRustImageProcessing = async () => {
+        try {
+          const start = Date.now();
+          const rustImageData = await dispatchRustImageOperation(
+            currentImageActionParams
+          );
+          const end = Date.now();
+          console.log(
+            `dispatchRustImageOperation execution time: ${(start - end) / 1000}`
+          );
 
-        const { uint8imageData, imageUrl } =
-          deserializeRustImageResponse(rustImageData);
+          //about 1.8s
+          const { uint8imageData, imageUrl } =
+            deserializeRustImageResponse(rustImageData);
 
-        setProcessedImageData((prev) => {
-          // not pushing currentImageData if "null"  to image history
-          const newPreviousImageStatesData =
-            prev.currentImageData === null
-              ? prev.previousImageStatesData
-              : [...prev.previousImageStatesData, prev.currentImageData];
+          setProcessedImageData((prev) => {
+            // not pushing currentImageData if "null" (initial state)  to image history
+            const newPreviousImageStatesData =
+              prev.currentImageData === null
+                ? prev.previousImageStatesData
+                : [...prev.previousImageStatesData, prev.currentImageData];
 
-          return {
-            currentImageURL: imageUrl,
-            currentImageData: uint8imageData,
-            previousImageStatesData: newPreviousImageStatesData,
+            return {
+              currentImageURL: imageUrl,
+              currentImageData: uint8imageData,
+              previousImageStatesData: newPreviousImageStatesData,
+            };
+          });
+        } catch {
+          (error: any) => {
+            console.error(`error while handling rust img operation: `, error);
           };
-        });
-      } catch {
-        (error: any) => {
-          console.error(`error while handling rust img operation: `, error);
-        };
-      }
-    };
+        }
+      };
 
-    handleRustImageProcessing();
+      handleRustImageProcessing();
+      setCurrentImageActionParams(null);
+    }
   }, [currentImageActionParams]);
 
   useEffect(() => {

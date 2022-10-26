@@ -12,7 +12,7 @@ import ImageChoiceLightbox from "../lightbox/ImageChoiceLightbox";
 import WebcamLightbox from "../lightbox/WebcamLightbox";
 import { routes } from "../../routes";
 import { serializeImageData } from "../../utils/dataFormattingHelpers";
-import { imageAction } from "../../utils/imageActions";
+import { IMG_PROC_METHODS } from "../../utils/imgProcConstants";
 
 // TODO: rozkminic czy nie sciagnac stany z webview modal i uzywac contextu tylko tu
 
@@ -39,7 +39,7 @@ const LoadImageModule = () => {
 
   const handleConfirmImage = () => {
     processImage({
-      type: imageAction.LOAD_IMAGE,
+      type: IMG_PROC_METHODS.LOAD_IMAGE,
       payload: {
         img: serializeImageData(chosenImage.imageData),
       },

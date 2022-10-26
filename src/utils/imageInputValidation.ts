@@ -31,7 +31,7 @@ export const supportedImageExtensions = [
   "bmp",
   "ico",
   "webp",
-  "tiff",
+  // "tiff",
 ];
 
 export const validateImageInput = (fileType: string) => {

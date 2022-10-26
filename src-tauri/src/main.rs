@@ -5,9 +5,10 @@
 
 use opencv::{
     core::{ ROTATE_90_COUNTERCLOCKWISE},
-    highgui,
+    // highgui,
     prelude::*,
-    videoio, imgcodecs::{IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT},
+    // videoio, 
+    imgcodecs::{IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT, IMREAD_GRAYSCALE}, imgproc::{COLOR_BGR2GRAY, THRESH_BINARY, THRESH_BINARY_INV, THRESH_TRUNC, THRESH_TOZERO, THRESH_TOZERO_INV, THRESH_OTSU, THRESH_TRIANGLE},
 };
 
 
@@ -71,30 +72,73 @@ fn rotate(img: &str) -> String {
     let fn_start = std::time::Instant::now();
 
     let image_vector = deserialize_img_string(img);
-    let mut mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
+    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
 
-    let mut buff_mat = opencv::core::Mat::default();
-    opencv::core::rotate(&mat, &mut buff_mat, ROTATE_90_COUNTERCLOCKWISE).unwrap();
+    let mut output_mat = opencv::core::Mat::default();
+    opencv::core::rotate(&initial_mat, &mut output_mat, ROTATE_90_COUNTERCLOCKWISE).unwrap();
 
-    let mut output = opencv::types::VectorOfu8::new();
+    let mut output_vector = opencv::types::VectorOfu8::new();
     let mut output_params =  opencv::types::VectorOfi32::new();
     output_params.push(
         IMWRITE_PNG_STRATEGY_DEFAULT);
 
-    opencv::imgcodecs::imencode(".png", &buff_mat, &mut output, &output_params ).unwrap();
-    mat.release().unwrap();
-    buff_mat.release().unwrap();
+    opencv::imgcodecs::imencode(".png", &output_mat, &mut output_vector, &output_params ).unwrap();
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
     
 
     let fn_duration = fn_start.elapsed();
     println!("Time elapsed in rotate() is: {:?}", fn_duration);
 
-    format!("{:?}", output)
+    format!("{:?}", output_vector)
+}
+
+
+#[tauri::command]
+fn threshold(img: &str,thresh: &str, maxval: &str,  typ: &str, grayscale: &str) -> String {
+    let fn_start = std::time::Instant::now();
+
+    //formatting input image
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, if grayscale == "true" {IMREAD_GRAYSCALE} else {IMREAD_UNCHANGED}).unwrap();
+
+    //setting operation params from next js
+    let mut threshold_typ ;
+    match typ{
+        "THRESH_BINARY"=> threshold_typ = THRESH_BINARY,
+        "THRESH_BINARY_INV"=>threshold_typ= THRESH_BINARY_INV,
+        "THRESH_TRUNC"=>threshold_typ= THRESH_TRUNC,
+        "THRESH_TOZERO"=>threshold_typ= THRESH_TOZERO,
+        "THRESH_TOZERO_INV"=>threshold_typ= THRESH_TOZERO_INV,
+        "THRESH_OTSU"=>threshold_typ= THRESH_OTSU,
+        "THRESH_TRIANGLE"=>threshold_typ= THRESH_TRIANGLE,
+        &_=> threshold_typ = THRESH_BINARY
+    };
+    //performing operation
+    let mut output_mat = opencv::core::Mat::default();
+    opencv::imgproc::threshold(&initial_mat, &mut output_mat, thresh.parse::<f64>().unwrap(), maxval.parse::<f64>().unwrap(), threshold_typ).unwrap();
+
+    //formatting output
+    let mut output_vector = opencv::types::VectorOfu8::new();
+    let mut output_params =  opencv::types::VectorOfi32::new();
+    output_params.push(
+        IMWRITE_PNG_STRATEGY_DEFAULT);
+
+    opencv::imgcodecs::imencode(".png", &output_mat, &mut output_vector, &output_params ).unwrap();
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    //checking performance
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in threshold() is: {:?}", fn_duration);
+
+    //sending result
+    format!("{:?}", output_vector)
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![ load_image, rotate])
+        .invoke_handler(tauri::generate_handler![ load_image, rotate, threshold])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

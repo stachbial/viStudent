@@ -11,7 +11,7 @@ import LoopIcon from "@mui/icons-material/Loop";
 import ChooseCameraDialog from "../../../components/dialogs/ChooseCameraDialog";
 import Loader from "../../../components/Loader";
 import { routes } from "../../../routes";
-import { imageAction } from "../../../utils/imageActions";
+import { IMG_PROC_METHODS } from "../../../utils/imgProcConstants";
 import {
   getImageDataFromBuffer,
   serializeImageData,
@@ -79,7 +79,7 @@ const WebcamLightbox = ({ open, onBackdropClose, onConfirm }) => {
 
   const handleConfirmImage = () => {
     processImage({
-      type: imageAction.LOAD_IMAGE,
+      type: IMG_PROC_METHODS.LOAD_IMAGE,
       payload: {
         img: serializeImageData(screenShotImageData.screenshotData),
       },

@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+
 import { Theme } from "@mui/material/styles";
 export const theme: Theme = createTheme({
   palette: {
@@ -9,23 +10,27 @@ export const theme: Theme = createTheme({
       dark: "#0a1929",
     },
     secondary: {
-      light: "#b0ffff",
-      main: "#b0ffff",
-      dark: "#323f52",
+      light: "#87c0c0",
+      main: "#c9e6e5",
+      dark: "#1a2f4f",
     },
     grey: {
-      "100": "#718792",
+      "100": "#dbe5ea",
       "300": "#455a64",
       "800": "#21252B",
     },
-    
-   
-    // background: {
-    //   default: "#323f52",
-    //   paper: "#282c34",
-    // },
-    // blueGray: {
-    //   "300": "#323f52",
-    // },
+
+  },
+  components: {
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          background: "#1a202a",
+        },
+        
+      },
+    },
   },
 });
+
+

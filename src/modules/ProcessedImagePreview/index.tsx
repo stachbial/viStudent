@@ -9,7 +9,7 @@ import CameraswitchIcon from "@mui/icons-material/Cameraswitch";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import Loader from "../../components/Loader";
 import { routes } from "../../routes";
-import { imageAction } from "../../utils/imageActions";
+import { IMG_PROC_METHODS } from "../../utils/imgProcConstants";
 import {
   StyledModuleWrapper,
   StyledContent,
@@ -38,7 +38,7 @@ const ProcessedImagePreview = () => {
   }, [undoProcessImage]);
 
   const handleRotateButton = useCallback(() => {
-    processImage({ type: imageAction.ROTATE });
+    processImage({ type: IMG_PROC_METHODS.ROTATE });
   }, [processImage]);
 
   return (
