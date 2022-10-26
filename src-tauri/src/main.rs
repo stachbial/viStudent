@@ -8,7 +8,7 @@ use opencv::{
     // highgui,
     prelude::*,
     // videoio, 
-    imgcodecs::{IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT, IMREAD_GRAYSCALE}, imgproc::{COLOR_BGR2GRAY, THRESH_BINARY, THRESH_BINARY_INV, THRESH_TRUNC, THRESH_TOZERO, THRESH_TOZERO_INV, THRESH_OTSU, THRESH_TRIANGLE},
+    imgcodecs::{IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT, IMREAD_GRAYSCALE}, imgproc::{COLOR_BGR2GRAY, THRESH_BINARY, THRESH_BINARY_INV, THRESH_TRUNC, THRESH_TOZERO, THRESH_TOZERO_INV, THRESH_OTSU, THRESH_TRIANGLE, ADAPTIVE_THRESH_MEAN_C, ADAPTIVE_THRESH_GAUSSIAN_C},
 };
 
 
@@ -114,6 +114,7 @@ fn threshold(img: &str,thresh: &str, maxval: &str,  typ: &str, grayscale: &str) 
         "THRESH_TRIANGLE"=>threshold_typ= THRESH_TRIANGLE,
         &_=> threshold_typ = THRESH_BINARY
     };
+    
     //performing operation
     let mut output_mat = opencv::core::Mat::default();
     opencv::imgproc::threshold(&initial_mat, &mut output_mat, thresh.parse::<f64>().unwrap(), maxval.parse::<f64>().unwrap(), threshold_typ).unwrap();
@@ -123,7 +124,6 @@ fn threshold(img: &str,thresh: &str, maxval: &str,  typ: &str, grayscale: &str) 
     let mut output_params =  opencv::types::VectorOfi32::new();
     output_params.push(
         IMWRITE_PNG_STRATEGY_DEFAULT);
-
     opencv::imgcodecs::imencode(".png", &output_mat, &mut output_vector, &output_params ).unwrap();
     initial_mat.release().unwrap();
     output_mat.release().unwrap();
@@ -136,9 +136,57 @@ fn threshold(img: &str,thresh: &str, maxval: &str,  typ: &str, grayscale: &str) 
     format!("{:?}", output_vector)
 }
 
+
+#[tauri::command]
+fn adaptive_threshold(img: &str, maxval: &str, adaptiveMethod: &str, threshTyp: &str, blockSize: &str, c: &str, grayscale: &str) -> String {
+    let fn_start = std::time::Instant::now();
+
+    //formatting input image
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, if grayscale == "true" {IMREAD_GRAYSCALE} else {IMREAD_UNCHANGED}).unwrap();
+
+    //setting operation params from next js
+    let mut thresh_typ_;
+    match threshTyp{
+        "THRESH_BINARY"=> thresh_typ_ = THRESH_BINARY,
+        "THRESH_BINARY_INV"=>thresh_typ_= THRESH_BINARY_INV,
+        &_=> thresh_typ_ = THRESH_BINARY
+    };
+    let mut adaptive_method_;
+    match adaptiveMethod{
+        "ADAPTIVE_THRESH_MEAN_C"=> adaptive_method_ =ADAPTIVE_THRESH_MEAN_C,
+        "ADAPTIVE_THRESH_GAUSSIAN_C"=> adaptive_method_ = ADAPTIVE_THRESH_GAUSSIAN_C,
+        &_=>adaptive_method_ =ADAPTIVE_THRESH_MEAN_C
+    };
+
+    //performing operation
+    let mut output_mat = opencv::core::Mat::default();
+    opencv::imgproc::adaptive_threshold(&initial_mat, &mut output_mat, maxval.parse::<f64>().unwrap(),adaptive_method_,thresh_typ_, blockSize.parse::<i32>().unwrap(),c.parse::<f64>().unwrap()).unwrap();
+
+    //formatting output
+    let mut output_vector = opencv::types::VectorOfu8::new();
+    let mut output_params =  opencv::types::VectorOfi32::new();
+    output_params.push(
+        IMWRITE_PNG_STRATEGY_DEFAULT);
+    opencv::imgcodecs::imencode(".png", &output_mat, &mut output_vector, &output_params ).unwrap();
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    //checking performance
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in adapitve_threshold() is: {:?}", fn_duration);
+
+    //sending result
+    format!("{:?}", output_vector)
+}
+
+
+
+
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![ load_image, rotate, threshold])
+        .invoke_handler(tauri::generate_handler![ load_image, rotate, threshold, adaptive_threshold])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

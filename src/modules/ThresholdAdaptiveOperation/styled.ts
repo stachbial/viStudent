@@ -12,7 +12,7 @@ export const StyledSelectWrapper = styled("div")`
   width: 100%;
 `;
 
-export const StyledNumberInputsWrapper = styled("div")`
+export const StyledInputsWrapper = styled("div")`
   display: flex;
   gap: 10px;
 `;

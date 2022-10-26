@@ -2,18 +2,14 @@ import { useState, useCallback } from "react";
 import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ControlDrawer from "../ControlDrawer";
-import NormalizationPanel from "../NormalizationPanel";
-import { IMG_PROC_MODULES } from "../../utils/imgProcConstants";
-import {
-  StyledWrapper,
-  StyledBackground,
-  StyledModuleContainer,
-} from "./styled";
+import ThresholdingPanel from "../ThresholdingPanel";
+import { IMG_PROC_PANELS } from "../../utils/imgProcConstants";
+import { StyledWrapper, StyledBackground } from "./styled";
 
 const ControlPanel = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [displayedModule, setDisplayedModule] = useState(
-    IMG_PROC_MODULES.NORMALIZATION
+    IMG_PROC_PANELS.THRESHOLDING
   );
 
   const toggleDrawer = useCallback(() => {
@@ -29,7 +25,7 @@ const ControlPanel = () => {
   );
 
   return (
-    <StyledWrapper item sm={5.5}>
+    <StyledWrapper item sm={5.8}>
       <StyledBackground>
         <AppBar position="static">
           <Toolbar component="div" onClick={toggleDrawer} sx={{ gap: "10px" }}>
@@ -45,13 +41,12 @@ const ControlPanel = () => {
           open={drawerOpen}
           onClose={toggleDrawer}
           onItemClick={handleDrawerItemClick}
-          items={IMG_PROC_MODULES}
+          items={IMG_PROC_PANELS}
         />
-        <StyledModuleContainer>
-          {displayedModule === IMG_PROC_MODULES.NORMALIZATION && (
-            <NormalizationPanel />
-          )}
-        </StyledModuleContainer>
+
+        {displayedModule === IMG_PROC_PANELS.THRESHOLDING && (
+          <ThresholdingPanel />
+        )}
       </StyledBackground>
     </StyledWrapper>
   );

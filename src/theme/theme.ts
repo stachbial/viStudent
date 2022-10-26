@@ -11,7 +11,7 @@ export const theme: Theme = createTheme({
     },
     secondary: {
       light: "#87c0c0",
-      main: "#c9e6e5",
+      main: "#fafafa",
       dark: "#1a2f4f",
     },
     grey: {
@@ -19,15 +19,13 @@ export const theme: Theme = createTheme({
       "300": "#455a64",
       "800": "#21252B",
     },
-
   },
   components: {
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          background: "#1a202a",
+          background: "#21252B",
         },
-        
       },
     },
   },

@@ -12,7 +12,6 @@ export const StyledBackground = styled("div")`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 
   &::before {
     content: "";
@@ -25,11 +24,4 @@ export const StyledBackground = styled("div")`
     background-color: ${theme.palette.grey[800]};
     opacity: 0.7;
   }
-`;
-
-export const StyledModuleContainer = styled("div")`
-  padding: 16px 84px 16px 84px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 `;

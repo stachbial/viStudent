@@ -14,7 +14,7 @@ import {
 import { StyledSubMethodForm, StyledNumberInputsWrapper } from "./styled";
 
 const ThresholdOperation = () => {
-  const { processImage } = useContext(ImageProcessingContext);
+  const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [threshParams, setThreshParams] = useState<TRESHOLD_PARAMS>({
     grayscale: true,
@@ -25,10 +25,12 @@ const ThresholdOperation = () => {
 
   const handleOnChangeNumberThresh = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      event.stopPropagation();
+
       setThreshParams((prev) => {
         return {
           ...prev,
-          thresh: event.target.value,
+          thresh: parseFloat(event.target.value).toString(),
         };
       });
     },
@@ -37,10 +39,12 @@ const ThresholdOperation = () => {
 
   const handleOnChangeNumberMaxVal = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      event.stopPropagation();
+
       setThreshParams((prev) => {
         return {
           ...prev,
-          maxval: event.target.value,
+          maxval: parseFloat(event.target.value).toString(),
         };
       });
     },
@@ -48,6 +52,8 @@ const ThresholdOperation = () => {
   );
 
   const handleOnChangeGrayScale = useCallback(() => {
+    event.stopPropagation();
+
     setThreshParams((prev) => {
       return { ...prev, grayscale: !prev.grayscale };
     });
@@ -55,7 +61,6 @@ const ThresholdOperation = () => {
 
   const handleOnChangeSelectType = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.preventDefault();
       event.stopPropagation();
 
       setThreshParams((prev) => {
@@ -86,7 +91,7 @@ const ThresholdOperation = () => {
   return (
     <StyledSubMethodForm fullWidth>
       <Typography component="h5" fontWeight="bold">
-        Progowanie Proste
+        {"Progowanie Proste (globalne)"}
       </Typography>
       <TextField
         value={threshParams.typ ? threshParams.typ : ""}
@@ -109,9 +114,10 @@ const ThresholdOperation = () => {
           type="number"
           inputMode="decimal"
           InputProps={{ inputProps: { max: 255, step: 0.01, min: 0 } }}
-          label="Dolny próg"
+          label="Dolny próg (min: 0)"
           color="secondary"
           sx={{ flex: "1" }}
+          value={threshParams.thresh ? threshParams.thresh : ""}
           onChange={handleOnChangeNumberThresh}
         />
         <TextField
@@ -126,9 +132,10 @@ const ThresholdOperation = () => {
               min: threshParams.thresh,
             },
           }}
-          label="Górny próg"
+          label="Górny próg (max: 255)"
           color="secondary"
           sx={{ flex: "1" }}
+          value={threshParams.maxval ? threshParams.maxval : ""}
           onChange={handleOnChangeNumberMaxVal}
         />
       </StyledNumberInputsWrapper>
@@ -148,7 +155,7 @@ const ThresholdOperation = () => {
       <Button
         variant="contained"
         onClick={handleThresholdOperation}
-        disabled={!isFormValid}
+        disabled={!isFormValid && !isLoading}
       >
         Wykonaj progowanie proste
       </Button>
