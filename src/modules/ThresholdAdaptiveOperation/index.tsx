@@ -21,7 +21,8 @@ import {
 import { StyledSubMethodForm, StyledInputsWrapper } from "./styled";
 
 // TODO: find out value ranges for blockSize and c
-// TODO: ogarnac isLoading
+// TODO: fix: disabled on isLoading
+// TODO: implement input debouncing
 
 const ThresholdAdaptiveOperation = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);

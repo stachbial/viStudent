@@ -33,6 +33,7 @@ const ControlDrawer = ({ open, onClose, onItemClick, items: modules }) => {
                 key={module}
                 color="secondary"
                 onClick={onItemClick(module)}
+                sx={{ color: "#fafafa" }}
               >
                 {module}
               </Button>
