@@ -1,11 +1,37 @@
-import { useCallback } from "react";
-import { Drawer, Toolbar, IconButton, Typography, Button } from "@mui/material";
+import React, { useState, useCallback } from "react";
+import {
+  Drawer,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionActions,
+} from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import Divider from "../../components/Divider";
-import { StyledModulesList, StyledListItem } from "./styled";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { StyledAccordionWrapper } from "./styled";
 import { theme } from "../../theme/theme";
 
-const ControlDrawer = ({ open, onClose, onItemClick, items: modules }) => {
+const ControlDrawer = ({
+  open,
+  onClose,
+  onItemClick,
+  itemsData: panelsData,
+}) => {
+  const [expandedCategory, setExpandedCategory] = useState<string | false>(
+    false
+  );
+
+  const handleAccordionExpansion = useCallback(
+    (panelName: string) =>
+      (event: React.SyntheticEvent, isExpanded: boolean) => {
+        setExpandedCategory(isExpanded ? panelName : false);
+      },
+    [expandedCategory, setExpandedCategory]
+  );
+
   return (
     <Drawer anchor="left" open={open} onClose={onClose}>
       <Toolbar
@@ -21,27 +47,43 @@ const ControlDrawer = ({ open, onClose, onItemClick, items: modules }) => {
         <Typography variant="subtitle1" component="h6">
           Metody przetwarzania obrazu
         </Typography>
-        <IconButton onClick={onClose}>
+        <IconButton onClick={onClose} sx={{ marginRight: "4px" }}>
           <CloseRoundedIcon />
         </IconButton>
       </Toolbar>
-      <StyledModulesList>
-        {Object.values(modules).map((module: string) => {
+      <StyledAccordionWrapper>
+        {Object.values(panelsData).map((panelData: any) => {
           return (
-            <StyledListItem>
-              <Button
-                key={module}
-                color="secondary"
-                onClick={onItemClick(module)}
-                sx={{ color: "#fafafa" }}
-              >
-                {module}
-              </Button>
-              <Divider />
-            </StyledListItem>
+            <Accordion
+              key={panelData.TITLE}
+              expanded={expandedCategory === panelData.TITLE}
+              onChange={handleAccordionExpansion(panelData.TITLE)}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>{panelData.TITLE}</Typography>
+              </AccordionSummary>
+              <AccordionActions>
+                {Object.values(panelData.PANELS).map((panel: any) => {
+                  return (
+                    <Button
+                      size="small"
+                      key={panel}
+                      variant="contained"
+                      onClick={onItemClick({
+                        TITLE: panelData.TITLE,
+                        PANEL: panel,
+                      })}
+                      sx={{ color: "#fafafa" }}
+                    >
+                      {panel}
+                    </Button>
+                  );
+                })}
+              </AccordionActions>
+            </Accordion>
           );
         })}
-      </StyledModulesList>
+      </StyledAccordionWrapper>
     </Drawer>
   );
 };

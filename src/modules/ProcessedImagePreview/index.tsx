@@ -9,7 +9,7 @@ import CameraswitchIcon from "@mui/icons-material/Cameraswitch";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import Loader from "../../components/Loader";
 import { routes } from "../../routes";
-import { IMG_PROC_METHODS } from "../../utils/imgProcConstants";
+import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 import {
   StyledModuleWrapper,
   StyledContent,

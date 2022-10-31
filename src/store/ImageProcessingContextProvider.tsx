@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { ImageProcessingContext } from "./ImageProcessingContext";
 import { dispatchRustImageOperation } from "../utils/dispatchRustImageOperation";
-import { IMG_PROC_METHODS } from "../utils/imgProcConstants";
+import { IMG_PROC_METHODS } from "../utils/IMG_PROC_CONSTANTS";
 import {
   serializeImageData,
   deserializeRustImageResponse,

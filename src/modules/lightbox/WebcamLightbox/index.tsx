@@ -11,7 +11,7 @@ import LoopIcon from "@mui/icons-material/Loop";
 import ChooseCameraDialog from "../../../components/dialogs/ChooseCameraDialog";
 import Loader from "../../../components/Loader";
 import { routes } from "../../../routes";
-import { IMG_PROC_METHODS } from "../../../utils/imgProcConstants";
+import { IMG_PROC_METHODS } from "../../../utils/IMG_PROC_CONSTANTS";
 import {
   getImageDataFromBuffer,
   serializeImageData,

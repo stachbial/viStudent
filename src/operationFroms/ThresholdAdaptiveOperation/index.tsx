@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
-import { IMG_PROC_METHODS } from "../../utils/imgProcConstants";
+import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 import {
   TRESHOLD_TYP,
   TRESHOLD_ADPT_PARAMS,
@@ -9,7 +9,7 @@ import {
 import {
   THRESHOLD_TYPES,
   THRESHOLD_ADPT_METHODS_TYPES,
-} from "../../utils/imgProcConstants";
+} from "../../utils/IMG_PROC_CONSTANTS";
 import {
   Typography,
   TextField,
@@ -21,7 +21,6 @@ import {
 import { StyledSubMethodForm, StyledInputsWrapper } from "./styled";
 
 // TODO: find out value ranges for blockSize and c
-// TODO: fix: disabled on isLoading
 // TODO: implement input debouncing
 
 const ThresholdAdaptiveOperation = () => {
@@ -57,7 +56,7 @@ const ThresholdAdaptiveOperation = () => {
       setThreshParams((prev) => {
         return {
           ...prev,
-          blockSize: parseFloat(event.target.value).toString(),
+          blockSize: parseInt(event.target.value).toString(),
         };
       });
     },
@@ -84,7 +83,7 @@ const ThresholdAdaptiveOperation = () => {
     });
   }, [setThreshParams, threshParams]);
 
-  const handleOnChangethreshType = useCallback(
+  const handleOnChangeThreshType = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       event.stopPropagation();
 
@@ -140,13 +139,13 @@ const ThresholdAdaptiveOperation = () => {
   return (
     <StyledSubMethodForm fullWidth>
       <Typography component="h5" fontWeight="bold">
-        {"Progowanie Adaptacyjne"}
+        {"Progowanie Adaptacyjne (lokalne)"}
       </Typography>
       <StyledInputsWrapper>
         <TextField
           value={threshParams.threshTyp ? threshParams.threshTyp : ""}
           label="Typ progowania"
-          onChange={handleOnChangethreshType}
+          onChange={handleOnChangeThreshType}
           color="secondary"
           sx={{ flex: "1" }}
           select
@@ -212,7 +211,7 @@ const ThresholdAdaptiveOperation = () => {
               min: 0,
             },
           }}
-          label="Stała C"
+          label="Próg globalny C"
           color="secondary"
           sx={{ flex: "1" }}
           value={threshParams.c ? threshParams.c : ""}
@@ -220,7 +219,7 @@ const ThresholdAdaptiveOperation = () => {
         />
       </StyledInputsWrapper>
       <FormControlLabel
-        sx={{ margin: 0 }}
+        sx={{ margin: 0, justifyContent: "space-between" }}
         label="Konwertuj na obraz monochromatyczny (zalecane)"
         labelPlacement="start"
         defaultChecked
@@ -235,7 +234,7 @@ const ThresholdAdaptiveOperation = () => {
       <Button
         variant="contained"
         onClick={handleThresholdOperation}
-        disabled={!isFormValid && !isLoading}
+        disabled={!isFormValid || isLoading}
       >
         Wykonaj progowanie adaptacyjne
       </Button>

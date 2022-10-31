@@ -1,4 +1,4 @@
-import ControlPanel from "../ControlPanel";
+import ControlPanel from "../ControlMainPanel";
 import ProcessedImagePreview from "../ProcessedImagePreview";
 
 const ImageProcessingModule = () => {

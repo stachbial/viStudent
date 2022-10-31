@@ -12,7 +12,7 @@ import ImageChoiceLightbox from "../lightbox/ImageChoiceLightbox";
 import WebcamLightbox from "../lightbox/WebcamLightbox";
 import { routes } from "../../routes";
 import { serializeImageData } from "../../utils/dataFormattingHelpers";
-import { IMG_PROC_METHODS } from "../../utils/imgProcConstants";
+import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
 // TODO: rozkminic czy nie sciagnac stany z webview modal i uzywac contextu tylko tu
 

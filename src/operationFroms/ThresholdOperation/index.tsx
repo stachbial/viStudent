@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
-import { IMG_PROC_METHODS } from "../../utils/imgProcConstants";
+import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 import { TRESHOLD_TYP, TRESHOLD_PARAMS } from "../../types/imgProcParamsTypes";
-import { THRESHOLD_TYPES } from "../../utils/imgProcConstants";
+import { THRESHOLD_TYPES } from "../../utils/IMG_PROC_CONSTANTS";
 import {
   Typography,
   TextField,
@@ -140,7 +140,7 @@ const ThresholdOperation = () => {
         />
       </StyledNumberInputsWrapper>
       <FormControlLabel
-        sx={{ margin: 0 }}
+        sx={{ margin: 0, justifyContent: "space-between" }}
         label="Konwertuj na obraz monochromatyczny (zalecane)"
         labelPlacement="start"
         defaultChecked
@@ -155,7 +155,7 @@ const ThresholdOperation = () => {
       <Button
         variant="contained"
         onClick={handleThresholdOperation}
-        disabled={!isFormValid && !isLoading}
+        disabled={!isFormValid || isLoading}
       >
         Wykonaj progowanie proste
       </Button>

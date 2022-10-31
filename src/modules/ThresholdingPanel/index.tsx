@@ -1,16 +1,14 @@
-import ThresholdOperation from "../ThresholdOperation";
+import ThresholdOperation from "../../operationFroms/ThresholdOperation";
 import Divider from "../../components/Divider";
-import ThresholdAdaptiveOperation from "../ThresholdAdaptiveOperation";
-
-import { StyledModuleContainer } from "./styled";
+import ThresholdAdaptiveOperation from "../../operationFroms/ThresholdAdaptiveOperation";
 
 const ThresholdingPanel = () => {
   return (
-    <StyledModuleContainer>
+    <>
       <ThresholdOperation />
       <Divider />
       <ThresholdAdaptiveOperation />
-    </StyledModuleContainer>
+    </>
   );
 };
 

@@ -2,26 +2,31 @@ import { useState, useCallback } from "react";
 import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ControlDrawer from "../ControlDrawer";
-import ThresholdingPanel from "../ThresholdingPanel";
-import { IMG_PROC_PANELS } from "../../utils/imgProcConstants";
-import { StyledWrapper, StyledBackground } from "./styled";
+import ControlSubPanel from "../ControlSubPanel";
+import { IMG_PROC_PANELS_DATA } from "../../utils/IMG_PROC_CONSTANTS";
+import {
+  StyledWrapper,
+  StyledBackground,
+  StyledSubPanelContainer,
+} from "./styled";
 
-const ControlPanel = () => {
+const ControlMainPanel = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [displayedModule, setDisplayedModule] = useState(
-    IMG_PROC_PANELS.THRESHOLDING
-  );
+  const [displayedPanelData, setDisplayedPanelData] = useState({
+    TITLE: IMG_PROC_PANELS_DATA.THRESHOLDING.TITLE,
+    PANEL: IMG_PROC_PANELS_DATA.THRESHOLDING.PANELS.BASIC_ADAPTIVE,
+  });
 
   const toggleDrawer = useCallback(() => {
     setDrawerOpen(!drawerOpen);
   }, [setDrawerOpen, drawerOpen]);
 
   const handleDrawerItemClick = useCallback(
-    (moduleName: string) => () => {
-      setDisplayedModule(moduleName);
+    (panelData: { TITLE: string; PANEL: string }) => () => {
+      setDisplayedPanelData(panelData);
       toggleDrawer();
     },
-    [setDisplayedModule, toggleDrawer]
+    [setDisplayedPanelData, toggleDrawer]
   );
 
   return (
@@ -33,7 +38,7 @@ const ControlPanel = () => {
               <MenuIcon />
             </IconButton>
             <Typography variant="subtitle1" component="h6">
-              {displayedModule}
+              {`${displayedPanelData.TITLE} / ${displayedPanelData.PANEL}`}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -41,15 +46,14 @@ const ControlPanel = () => {
           open={drawerOpen}
           onClose={toggleDrawer}
           onItemClick={handleDrawerItemClick}
-          items={IMG_PROC_PANELS}
+          itemsData={IMG_PROC_PANELS_DATA}
         />
-
-        {displayedModule === IMG_PROC_PANELS.THRESHOLDING && (
-          <ThresholdingPanel />
-        )}
+        <StyledSubPanelContainer>
+          <ControlSubPanel displayedSubPanel={displayedPanelData.PANEL} />
+        </StyledSubPanelContainer>
       </StyledBackground>
     </StyledWrapper>
   );
 };
 
-export default ControlPanel;
+export default ControlMainPanel;

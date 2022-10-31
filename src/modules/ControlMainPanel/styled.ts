@@ -25,3 +25,11 @@ export const StyledBackground = styled("div")`
     opacity: 0.7;
   }
 `;
+
+export const StyledSubPanelContainer = styled("div")`
+  flex: 1;
+  padding: 0 84px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+`;
