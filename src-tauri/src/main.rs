@@ -570,6 +570,50 @@ fn get_hist(
     format!("{:?}", output_json)
 }
 
+#[tauri::command]
+fn apply_rect_mask(
+    img: &str,
+    grayscale: &str,
+    maskH: &str,
+    maskW: &str,
+    maskX: &str,
+    maskY: &str,
+) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(
+        &image_vector,
+        if grayscale == "true" {
+            IMREAD_GRAYSCALE
+        } else {
+            IMREAD_UNCHANGED
+        },
+    )
+    .unwrap();
+
+    let mask = create_rect_mask(
+        maskH,
+        maskW,
+        maskX,
+        maskY,
+        initial_mat.size().unwrap().width,
+        initial_mat.size().unwrap().height,
+    );
+    let mut output_mat = opencv::core::Mat::default();
+
+    opencv::core::bitwise_and(&initial_mat, &initial_mat, &mut output_mat, &mask).unwrap();
+
+    let output_vector = format_mat_to_u8_vector_img(&output_mat);
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in apply_rect_mask() is: {:?}", fn_duration);
+
+    format!("{:?}", output_vector)
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -580,7 +624,8 @@ fn main() {
             dilatation,
             erosion,
             morph_advanced,
-            get_hist
+            get_hist,
+            apply_rect_mask
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

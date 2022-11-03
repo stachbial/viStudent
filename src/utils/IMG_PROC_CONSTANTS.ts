@@ -77,6 +77,7 @@ export const IMG_PROC_METHODS = {
   EROSION: "erosion",
   MORPH_ADVANCED: "morph_advanced",
   GET_HIST: "get_hist",
+  APPLY_RECT_MASK: "apply_rect_mask",
 };
 
 export const THRESHOLD_TYPES = [

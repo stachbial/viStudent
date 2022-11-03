@@ -16,8 +16,10 @@ import {
   useNumericInputState,
 } from "../../hooks/inputHooks";
 
-const HistOperation = ({ enableMask }) => {
-  const { currentImageData } = useContext(ImageProcessingContext);
+const HistOperation = ({ maskEnabled }) => {
+  const { currentImageData, processImage, isLoading } = useContext(
+    ImageProcessingContext
+  );
   const [histogramJsonData, setHistogramJsonData] = useState<any>(null);
   const [grayscale, setGrayscale] = useSwitchInputState(false);
   const [normalize, setNormalize] = useSwitchInputState(true);
@@ -52,6 +54,19 @@ const HistOperation = ({ enableMask }) => {
       },
     });
 
+    if (maskEnabled) {
+      processImage({
+        type: IMG_PROC_METHODS.APPLY_RECT_MASK,
+        payload: {
+          grayscale: grayscale.toString(),
+          maskH: maskH,
+          maskW: maskW,
+          maskX: maskX,
+          maskY: maskY,
+        },
+      });
+    }
+
     const json_res = JSON.parse(
       res.replace("Object ", "").replaceAll("String(", "").replaceAll(")", "")
     );
@@ -60,7 +75,7 @@ const HistOperation = ({ enableMask }) => {
 
   return (
     <>
-      {enableMask && (
+      {maskEnabled && (
         <StyledMaskOptionsContainer>
           <TextField
             size="small"
@@ -143,11 +158,15 @@ const HistOperation = ({ enableMask }) => {
           checked={normalize}
           label="Normalizuj wyniki w przedziale < 0, 100 >"
         />
-        <Button variant="contained" onClick={handleHistOperation}>
+        <Button
+          variant="contained"
+          onClick={handleHistOperation}
+          disabled={isLoading}
+        >
           Wyznacz histogram
         </Button>
       </StyledActionsContainer>
-      <StyledHistContainer short={enableMask}>
+      <StyledHistContainer short={maskEnabled}>
         <HistogramChart jsonData={histogramJsonData} />
       </StyledHistContainer>
     </>

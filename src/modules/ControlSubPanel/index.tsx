@@ -35,7 +35,7 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
     case IMG_PROC_PANELS_DATA.HISTOGRAMS.PANELS.LOCAL_HIST:
       return (
         <StyledSubPanelContainer wide>
-          <HistogramPanel enableMask />
+          <HistogramPanel maskEnabled />
         </StyledSubPanelContainer>
       );
     default:
