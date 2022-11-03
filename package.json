@@ -1,5 +1,5 @@
 {
-  "name": "gazo-vision",
+  "name": "vistudent",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -19,6 +19,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-webcam": "^7.0.1",
+    "recharts": "^2.1.16",
     "styled-components": "^5.3.6"
   },
   "devDependencies": {

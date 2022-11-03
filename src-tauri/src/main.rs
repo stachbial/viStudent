@@ -3,11 +3,13 @@
     windows_subsystem = "windows"
 )]
 
-
-
+use std::ffi::c_uchar;
 
 use opencv::{
-    core::{Point2i, Size2i, BORDER_CONSTANT, CV_64F, NORM_MINMAX, ROTATE_90_COUNTERCLOCKWISE},
+    core::{
+        Point2i, Size2i, BORDER_CONSTANT, CV_16U, CV_64F, CV_8S, CV_8U, NORM_MINMAX,
+        ROTATE_90_COUNTERCLOCKWISE,
+    },
     // videoio,
     imgcodecs::{IMREAD_GRAYSCALE, IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT},
     imgproc::{
@@ -66,15 +68,6 @@ fn format_mat_to_u8_vector_img(output_mat: &Mat) -> opencv::types::VectorOfu8 {
     return output_vector;
 }
 
-// fn format_mat_to_f32_vector(output_mat: &Mat) -> opencv::types::VectorOff32 {
-//     let mut output_vector = opencv::types::VectorOff32::new();
-//     let mut output_params = opencv::core::Vector::from(vec![IMWRITE_PNG_STRATEGY_DEFAULT]);
-
-//     opencv::imgcodecs::imencode(".png", &output_mat, &mut output_vector, &output_params).unwrap();
-
-//     return output_vector;
-// }
-
 fn get_morph_kernel(morph_shape: &str, morph_size: &str, anchor: opencv::core::Point_<i32>) -> Mat {
     let ksize_dim: i32 = morph_size.parse::<i32>().unwrap();
     let ksize = Size2i::new(ksize_dim, ksize_dim);
@@ -107,6 +100,45 @@ fn get_morph_type(morphType: &str) -> i32 {
         &_ => morph_type = MORPH_OPEN,
     };
     return morph_type;
+}
+
+fn create_rect_mask(
+    maskH: &str,
+    maskW: &str,
+    maskX: &str,
+    maskY: &str,
+    img_width: i32,
+    img_height: i32,
+) -> opencv::core::Mat {
+    let mut mask_h = maskH.parse::<i32>().unwrap();
+    let mut mask_w = maskW.parse::<i32>().unwrap();
+    let mut mask_x = maskX.parse::<i32>().unwrap();
+    let mut mask_y = maskY.parse::<i32>().unwrap();
+    let mut mask = opencv::core::Mat::default();
+
+    //validate dimensions
+    if mask_x < img_width && mask_y < img_height {
+        if mask_w > img_width - mask_x {
+            mask_w = img_width - mask_x
+        }
+        if mask_h > img_height - mask_y {
+            mask_h = img_height - mask_y
+        }
+        if mask_h != 0 && mask_w != 0 {
+            mask = opencv::core::Mat::zeros(img_height, img_width, 0)
+                .unwrap()
+                .to_mat()
+                .unwrap();
+
+            for r in mask_y..mask_y + mask_h {
+                for c in mask_x..mask_x + mask_w {
+                    let mut x = mask.at_2d_mut::<c_uchar>(r, c).unwrap();
+                    *x = 255;
+                }
+            }
+        }
+    }
+    return mask;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -429,7 +461,7 @@ fn morph_advanced(
 }
 
 #[tauri::command]
-fn global_hist(
+fn get_hist(
     img: &str,
     grayscale: &str,
     normalize: &str,
@@ -452,15 +484,23 @@ fn global_hist(
     )
     .unwrap();
 
+    let mask = create_rect_mask(
+        maskH,
+        maskW,
+        maskX,
+        maskY,
+        initial_mat.size().unwrap().width,
+        initial_mat.size().unwrap().height,
+    );
+
     //getting color channels as vector of channel's mat
     let mut channel_vector = opencv::types::VectorOfMat::new();
     opencv::core::split(&initial_mat, &mut channel_vector).unwrap();
-    println!("{:?}", channel_vector.len());
 
     //initialize variables
-    let mut output_mat = opencv::core::Mat::default();
-    let mut mask = opencv::core::Mat::default();
-    let mut v = opencv::types::VectorOfi32::new();
+    let mut buff_mat = opencv::core::Mat::default();
+
+    let mut channel_output_vec = opencv::types::VectorOfi32::new();
     let mut current_val;
     let mut current_channel;
 
@@ -477,37 +517,42 @@ fn global_hist(
             &channel_vector,
             &opencv::core::Vector::from(vec![current_channel]),
             &mask,
-            &mut output_mat,
+            &mut buff_mat,
             &opencv::core::Vector::from(vec![256]),
             &opencv::core::Vector::from(vec![0., 256.]),
             false,
         )
         .unwrap();
 
-        let mut n = opencv::core::Mat::default();
-        opencv::core::normalize(
-            &output_mat,
-            &mut n,
-            0.,
-            100.,
-            NORM_MINMAX,
-            -1,
-            &opencv::core::Mat::default(),
-        )
-        .unwrap();
+        let mut channel_output_mat = buff_mat.clone();
 
-        // println!("{:?}", n);
-
-        for row in 0..n.rows() {
-            current_val = *n.at::<f32>(row).unwrap();
-            v.push(current_val as i32);
+        if normalize == "true" {
+            opencv::core::normalize(
+                &buff_mat,
+                &mut channel_output_mat,
+                0.,
+                100.,
+                NORM_MINMAX,
+                -1,
+                &opencv::core::Mat::default(),
+            )
+            .unwrap();
         }
-        println!("{:?}", v.len());
 
+        //parsing mat values to a vector
+        for row in 0..channel_output_mat.rows() {
+            current_val = *channel_output_mat.at::<f32>(row).unwrap();
+            channel_output_vec.push(current_val as i32);
+        }
+
+        //appending output to JSON
         channel_json_key = current_channel.to_string();
-        hist_json_value = format!("{:?}", v);
+        hist_json_value = format!("{:?}", channel_output_vec);
         map.insert(channel_json_key, serde_json::Value::String(hist_json_value));
-        v.clear();
+
+        //releasing memory
+        channel_output_mat.release().unwrap();
+        channel_output_vec.clear();
     }
 
     //formatting output
@@ -515,11 +560,11 @@ fn global_hist(
     println!("{:?}", output_json);
 
     initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+    buff_mat.release().unwrap();
 
     //checking performance
     let fn_duration = fn_start.elapsed();
-    println!("Time elapsed in global_hist() is: {:?}", fn_duration);
+    println!("Time elapsed in get_hist() is: {:?}", fn_duration);
 
     //sending result
     format!("{:?}", output_json)
@@ -535,7 +580,7 @@ fn main() {
             dilatation,
             erosion,
             morph_advanced,
-            global_hist
+            get_hist
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
