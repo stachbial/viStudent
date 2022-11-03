@@ -6,6 +6,7 @@ import {
 
 const initialImageProcessingContextState: ImageProcessingCtx = {
   currentImageURL: null,
+  currentImageData: null,
   isLoading: false,
   canUndo: false,
   processImage: (imageActionParams: imageActionParams) => {},

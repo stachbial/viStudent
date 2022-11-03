@@ -1,11 +1,11 @@
 import React from "react";
 import { FormControlLabel, Switch } from "@mui/material";
 
-const MonochromeSwitch = ({ checked, onChange }) => {
+const OperationSwitch = ({ checked, onChange, label }) => {
   return (
     <FormControlLabel
       sx={{ margin: 0, justifyContent: "space-between" }}
-      label="Konwertuj na obraz monochromatyczny"
+      label={label}
       labelPlacement="start"
       control={
         <Switch checked={checked} onChange={onChange} color="secondary" />
@@ -14,4 +14,4 @@ const MonochromeSwitch = ({ checked, onChange }) => {
   );
 };
 
-export default MonochromeSwitch;
+export default OperationSwitch;

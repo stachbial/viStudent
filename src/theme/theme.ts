@@ -30,3 +30,5 @@ export const theme: Theme = createTheme({
     },
   },
 });
+
+export const histChartLineColors = ["#2b67e8", "#57bb7d", "#ba3e3e", "#000000"];

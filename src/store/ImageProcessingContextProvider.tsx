@@ -75,16 +75,10 @@ export const ImageProcessingContextProvider = ({ children }) => {
     if (currentImageActionParams !== null) {
       const handleRustImageProcessing = async () => {
         try {
-          const start = Date.now();
           const rustImageData = await dispatchRustImageOperation(
             currentImageActionParams
           );
-          const end = Date.now();
-          console.log(
-            `dispatchRustImageOperation execution time: ${(start - end) / 1000}`
-          );
 
-          //about 1.8s
           const { uint8imageData, imageUrl } =
             deserializeRustImageResponse(rustImageData);
 
@@ -124,6 +118,7 @@ export const ImageProcessingContextProvider = ({ children }) => {
     <ImageProcessingContext.Provider
       value={{
         currentImageURL: processedImageData.currentImageURL,
+        currentImageData: processedImageData.currentImageData,
         isLoading: editingState.isLoading,
         canUndo: editingState.canUndo,
         processImage: handleImageProcessing,

@@ -6,7 +6,7 @@ import {
   ERODE_DILATE_PARAMS,
 } from "../../types/imgProcParamsTypes";
 import { Typography, TextField, Button, MenuItem } from "@mui/material";
-import MonochromeSwitch from "../../components/MonochromeSwitch";
+import OperationSwitch from "../../components/OperationSwitch";
 import { StyledSubMethodForm, StyledNumberInputsWrapper } from "./styled";
 
 // TODO: checkout morphSize and secure it's input
@@ -79,7 +79,6 @@ const MorphDilateOperation = () => {
         grayscale: dilateParams.grayscale.toString(),
       },
     });
-    console.log(dilateParams);
   }, [dilateParams]);
 
   useEffect(() => {
@@ -140,9 +139,10 @@ const MorphDilateOperation = () => {
           onChange={handleOnChangeIterations}
         />
       </StyledNumberInputsWrapper>
-      <MonochromeSwitch
+      <OperationSwitch
         checked={dilateParams.grayscale}
         onChange={handleOnChangeGrayScale}
+        label="Konwertuj na obraz monochromatyczny"
       />
       <Button
         variant="contained"

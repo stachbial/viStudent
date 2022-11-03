@@ -76,6 +76,7 @@ export const IMG_PROC_METHODS = {
   DILATATION: "dilatation",
   EROSION: "erosion",
   MORPH_ADVANCED: "morph_advanced",
+  GET_HIST: "get_hist",
 };
 
 export const THRESHOLD_TYPES = [

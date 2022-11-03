@@ -32,3 +32,32 @@ export const deserializeRustImageResponse = (rustImageData: string) => {
     imageUrl,
   };
 };
+
+export const formatHistJSONtoChartData = (histJSON: string) => {
+  //parse stringified vectors as intArrays
+  let parsedData = {};
+  Object.keys(histJSON).map((key) => {
+    parsedData = {
+      ...parsedData,
+      [key]: histJSON[key]
+        .replace("[", "")
+        .replace("]", "")
+        .split(",")
+        .map((el: string) => parseInt(el)),
+    };
+  });
+  //convert to chartData format => { "name" : pixelIntensityValue, "Channel x": channel'sValuesArray}
+  let parsedChartData = [];
+  for (let i = 0; i < parsedData[0].length; i++) {
+    let chartDataPoint: any = { name: i };
+    Object.keys(parsedData).map((channel) => {
+      chartDataPoint = {
+        ...chartDataPoint,
+        [`Channel ${channel}`]: parsedData[channel][i],
+      };
+    });
+    parsedChartData = [...parsedChartData, chartDataPoint];
+  }
+
+  return parsedChartData;
+};

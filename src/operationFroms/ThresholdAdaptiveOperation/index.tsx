@@ -112,10 +112,6 @@ const ThresholdAdaptiveOperation = () => {
   );
 
   const handleThresholdOperation = useCallback(() => {
-    console.log({
-      ...threshParams,
-      grayscale: threshParams.grayscale.toString(),
-    });
     processImage({
       type: IMG_PROC_METHODS.ADAPTIVE_THRESHOLD,
       payload: {

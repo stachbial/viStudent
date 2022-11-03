@@ -35,7 +35,6 @@ export const supportedImageExtensions = [
 ];
 
 export const validateImageInput = (fileType: string) => {
-  console.log(fileType);
   const fileExtension = fileType.split("/");
   if (
     supportedImageExtensions.includes(fileExtension[fileExtension.length - 1])

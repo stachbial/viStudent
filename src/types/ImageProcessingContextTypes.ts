@@ -1,4 +1,3 @@
-
 export type imageData = Uint8Array;
 
 export type currentImageData = imageData | null;
@@ -20,6 +19,7 @@ export type imageActionParams = {
 
 export type ImageProcessingCtx = {
   currentImageURL: currentImageURL;
+  currentImageData: currentImageData;
   isLoading: boolean;
   canUndo: boolean;
   processImage: (imageActionParams: imageActionParams) => void;

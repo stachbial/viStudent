@@ -4,11 +4,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ControlDrawer from "../ControlDrawer";
 import ControlSubPanel from "../ControlSubPanel";
 import { IMG_PROC_PANELS_DATA } from "../../utils/IMG_PROC_CONSTANTS";
-import {
-  StyledWrapper,
-  StyledBackground,
-  StyledSubPanelContainer,
-} from "./styled";
+import { StyledWrapper, StyledBackground } from "./styled";
 
 const ControlMainPanel = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -48,9 +44,7 @@ const ControlMainPanel = () => {
           onItemClick={handleDrawerItemClick}
           itemsData={IMG_PROC_PANELS_DATA}
         />
-        <StyledSubPanelContainer>
-          <ControlSubPanel displayedSubPanel={displayedPanelData.PANEL} />
-        </StyledSubPanelContainer>
+        <ControlSubPanel displayedSubPanel={displayedPanelData.PANEL} />
       </StyledBackground>
     </StyledWrapper>
   );
