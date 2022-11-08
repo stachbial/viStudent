@@ -1,20 +1,7 @@
-// export const IMG_PROC_PANELS = {
-//   THRESHOLDING: "Progowanie",
-//   MORPH_OPERATIONS: "Operacje morfologiczne",
-//   CONTRAST: "Korekcja kontrastu",
-//   CONVOLUTION: "Konwolucja",
-//   EDGE_DETECTION: "Wykrywanie krawędzi",
-//   CONTOURS: "Kontury",
-//   BLUR: "Rozmycie",
-//   HISTOGRAMS: "Histogramy",
-//   BINARIZATION: "Binaryzacja(?)",
-//   FILTRATION: "Filtracja(?)",
-// };
-
 export const IMG_PROC_PANELS_DATA = {
-  THRESHOLDING: {
-    TITLE: "Progowanie",
-    PANELS: { BASIC_ADAPTIVE: "Proste i adaptacyjne" },
+  SEGMENTATION: {
+    TITLE: "Segmentacja",
+    PANELS: { THRESHOLDING: "Progowanie", DIVISION: "Podział obszaru" },
   },
   MORPH_OPERATIONS: {
     TITLE: "Operacje morfologiczne",
@@ -28,6 +15,18 @@ export const IMG_PROC_PANELS_DATA = {
     PANELS: {
       GLOBAL_HIST: "Globalny histogram obrazu",
       LOCAL_HIST: "Lokalny histogram obrazu",
+    },
+  },
+  FILTER_LINEAR: {
+    TITLE: "Filtracja liniowa",
+    PANELS: {
+      CONVOLUTION: "Konwolucja",
+    },
+  },
+  FILTER_NON_LINEAR: {
+    TITLE: "Filtracja nieliniowa",
+    PANELS: {
+      EMPTY: "EMPTY",
     },
   },
   CONTRAST: {
@@ -56,12 +55,6 @@ export const IMG_PROC_PANELS_DATA = {
   },
   BLUR: {
     TITLE: "Rozmycie",
-    PANELS: {
-      EMPTY: "EMPTY",
-    },
-  },
-  FILTRATION: {
-    TITLE: "Filtracja(?)",
     PANELS: {
       EMPTY: "EMPTY",
     },

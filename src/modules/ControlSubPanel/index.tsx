@@ -8,7 +8,7 @@ import { StyledSubPanelContainer } from "./styled";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
   switch (displayedSubPanel) {
-    case IMG_PROC_PANELS_DATA.THRESHOLDING.PANELS.BASIC_ADAPTIVE:
+    case IMG_PROC_PANELS_DATA.SEGMENTATION.PANELS.THRESHOLDING:
       return (
         <StyledSubPanelContainer>
           <ThresholdingPanel />

@@ -79,6 +79,7 @@ const HistogramChart = ({ jsonData }) => {
                 dataKey={`Channel ${index}`}
                 stroke={chartLineColors[index]}
                 dot={false}
+                strokeWidth={1.5}
               />
             );
           })}
