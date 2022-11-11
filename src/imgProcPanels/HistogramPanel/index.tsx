@@ -19,7 +19,7 @@ import {
 // TODO: enhance mask inputs validation -> negative numbers or empty input
 // TODO: implement grayscale img conversion in context for no-mask variant
 
-const HistOperation = ({ maskEnabled }) => {
+const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
   const { currentImageData, processImage, isLoading } = useContext(
     ImageProcessingContext
   );
@@ -176,4 +176,4 @@ const HistOperation = ({ maskEnabled }) => {
   );
 };
 
-export default HistOperation;
+export default HistogramPanel;

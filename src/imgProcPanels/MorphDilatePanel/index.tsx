@@ -11,7 +11,7 @@ import { StyledSubMethodForm, StyledNumberInputsWrapper } from "./styled";
 
 // TODO: checkout morphSize and secure it's input
 
-const MorphDilateOperation = () => {
+const MorphDilatePanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [dilateParams, setDilateParams] = useState<ERODE_DILATE_PARAMS>({
@@ -155,4 +155,4 @@ const MorphDilateOperation = () => {
   );
 };
 
-export default MorphDilateOperation;
+export default MorphDilatePanel;

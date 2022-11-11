@@ -1,9 +1,14 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
-import { IMG_PROC_METHODS, MORPH_SHAPES } from "../../utils/IMG_PROC_CONSTANTS";
 import {
+  IMG_PROC_METHODS,
+  MORPH_SHAPES,
+  MORPH_ADVANCED_OP_TYPES,
+} from "../../utils/IMG_PROC_CONSTANTS";
+import {
+  MORPH_ADVANCED_TYPE,
   MORPH_SHAPE_TYPE,
-  ERODE_DILATE_PARAMS,
+  MORPH_ADVANCED_PARAMS,
 } from "../../types/imgProcParamsTypes";
 import { Typography, TextField, Button, MenuItem } from "@mui/material";
 import OperationSwitch from "../../components/OperationSwitch";
@@ -11,92 +16,128 @@ import { StyledSubMethodForm, StyledNumberInputsWrapper } from "./styled";
 
 // TODO: checkout morphSize and secure it's input
 
-const MorphErodeOperation = () => {
+const MorphAdvancedPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [erodeParams, setErodeParams] = useState<ERODE_DILATE_PARAMS>({
-    grayscale: false,
-    morphShape: null,
-    morphSize: null,
-    iterations: "1",
-  });
+  const [morphAdvancedParams, setMorphAdvancedParams] =
+    useState<MORPH_ADVANCED_PARAMS>({
+      grayscale: false,
+      morphShape: null,
+      morphSize: null,
+      iterations: "1",
+      morphType: null,
+    });
 
   const handleOnChangeMorphSize = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       event.stopPropagation();
 
-      setErodeParams((prev) => {
+      setMorphAdvancedParams((prev) => {
         return {
           ...prev,
           morphSize: parseInt(event.target.value).toString(),
         };
       });
     },
-    [setErodeParams, erodeParams]
+    [setMorphAdvancedParams, morphAdvancedParams]
   );
 
   const handleOnChangeIterations = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       event.stopPropagation();
 
-      setErodeParams((prev) => {
+      setMorphAdvancedParams((prev) => {
         return {
           ...prev,
           iterations: parseInt(event.target.value).toString(),
         };
       });
     },
-    [setErodeParams]
+    [setMorphAdvancedParams]
   );
 
   const handleOnChangeGrayScale = useCallback(() => {
     event.stopPropagation();
 
-    setErodeParams((prev) => {
+    setMorphAdvancedParams((prev) => {
       return { ...prev, grayscale: !prev.grayscale };
     });
-  }, [setErodeParams, erodeParams]);
+  }, [setMorphAdvancedParams, morphAdvancedParams]);
 
   const handleOnChangeMorphShape = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       event.stopPropagation();
 
-      setErodeParams((prev) => {
+      setMorphAdvancedParams((prev) => {
         return {
           ...prev,
           morphShape: event.target.value as MORPH_SHAPE_TYPE,
         };
       });
     },
-    [setErodeParams, erodeParams]
+    [setMorphAdvancedParams, morphAdvancedParams]
   );
 
-  const handleErodeOperation = useCallback(() => {
+  const handleOnChangeMorphType = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      event.stopPropagation();
+
+      setMorphAdvancedParams((prev) => {
+        return {
+          ...prev,
+          morphType: event.target.value as MORPH_ADVANCED_TYPE,
+        };
+      });
+    },
+    [setMorphAdvancedParams, morphAdvancedParams]
+  );
+
+  const handleOperation = useCallback(() => {
     processImage({
-      type: IMG_PROC_METHODS.EROSION,
+      type: IMG_PROC_METHODS.MORPH_ADVANCED,
       payload: {
-        ...erodeParams,
-        grayscale: erodeParams.grayscale.toString(),
+        ...morphAdvancedParams,
+        grayscale: morphAdvancedParams.grayscale.toString(),
       },
     });
-  }, [erodeParams]);
+  }, [morphAdvancedParams]);
 
   useEffect(() => {
     if (
-      erodeParams.morphShape &&
-      erodeParams.morphSize &&
-      erodeParams.iterations
+      morphAdvancedParams.morphType &&
+      morphAdvancedParams.morphShape &&
+      morphAdvancedParams.morphSize &&
+      morphAdvancedParams.iterations
     )
       setIsFormValid(true);
-  }, [erodeParams]);
+  }, [morphAdvancedParams]);
 
   return (
     <StyledSubMethodForm fullWidth>
       <Typography component="h5" fontWeight="bold">
-        {"Erozja"}
+        {"Parametry zaawansowanej operacji morfologicznej"}
       </Typography>
       <TextField
-        value={erodeParams.morphShape ? erodeParams.morphShape : ""}
+        value={
+          morphAdvancedParams.morphType ? morphAdvancedParams.morphType : ""
+        }
+        label="Typ operacji zaawansowanej"
+        onChange={handleOnChangeMorphType}
+        color="secondary"
+        select
+      >
+        {MORPH_ADVANCED_OP_TYPES.map((morphType) => {
+          return (
+            <MenuItem
+              value={morphType.value}
+            >{`${morphType.name} (${morphType.value})`}</MenuItem>
+          );
+        })}
+      </TextField>
+      <TextField
+        value={
+          morphAdvancedParams.morphShape ? morphAdvancedParams.morphShape : ""
+        }
         label="Element strukturalny"
         onChange={handleOnChangeMorphShape}
         color="secondary"
@@ -119,7 +160,9 @@ const MorphErodeOperation = () => {
           label="Wielkość el. strukturalnego"
           color="secondary"
           sx={{ flex: "1" }}
-          value={erodeParams.morphSize ? erodeParams.morphSize : ""}
+          value={
+            morphAdvancedParams.morphSize ? morphAdvancedParams.morphSize : ""
+          }
           onChange={handleOnChangeMorphSize}
         />
         <TextField
@@ -135,24 +178,26 @@ const MorphErodeOperation = () => {
           label="Liczba iteracji"
           color="secondary"
           sx={{ flex: "1" }}
-          value={erodeParams.iterations ? erodeParams.iterations : ""}
+          value={
+            morphAdvancedParams.iterations ? morphAdvancedParams.iterations : ""
+          }
           onChange={handleOnChangeIterations}
         />
       </StyledNumberInputsWrapper>
       <OperationSwitch
-        checked={erodeParams.grayscale}
+        checked={morphAdvancedParams.grayscale}
         onChange={handleOnChangeGrayScale}
         label="Konwertuj na obraz monochromatyczny"
       />
       <Button
         variant="contained"
-        onClick={handleErodeOperation}
+        onClick={handleOperation}
         disabled={!isFormValid || isLoading}
       >
-        Wykonaj operację erozji
+        Wykonaj zaawansowaną operację morfologiczną
       </Button>
     </StyledSubMethodForm>
   );
 };
 
-export default MorphErodeOperation;
+export default MorphAdvancedPanel;

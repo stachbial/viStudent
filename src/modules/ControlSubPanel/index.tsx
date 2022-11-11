@@ -1,9 +1,13 @@
 import React from "react";
 import { IMG_PROC_PANELS_DATA } from "../../utils/IMG_PROC_CONSTANTS";
-import ThresholdingPanel from "../ThresholdingPanel";
-import MorphErodeDilatePanel from "../MorphErodeDilatePanel";
-import MorphAdvancedPanel from "../MorphAdvancedPanel";
-import HistogramPanel from "../HistogramPanel";
+import Divider from "../../components/Divider";
+import ThresholdAdaptivePanel from "../../imgProcPanels/ThresholdAdaptivePanel";
+import ThresholdBasicPanel from "../../imgProcPanels/ThresholdBasicPanel";
+import MorphDilatePanel from "../../imgProcPanels/MorphDilatePanel";
+import MorphErodePanel from "../../imgProcPanels/MorphErodePanel";
+import MorphAdvancedPanel from "../../imgProcPanels/MorphAdvancedPanel";
+import HistogramPanel from "../../imgProcPanels/HistogramPanel";
+import ConvolutionPanel from "../../imgProcPanels/ConvolutionPanel";
 import { StyledSubPanelContainer } from "./styled";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
@@ -11,13 +15,17 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
     case IMG_PROC_PANELS_DATA.SEGMENTATION.PANELS.THRESHOLDING:
       return (
         <StyledSubPanelContainer>
-          <ThresholdingPanel />
+          <ThresholdBasicPanel />
+          <Divider />
+          <ThresholdAdaptivePanel />
         </StyledSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.ERODE_DILATE:
       return (
         <StyledSubPanelContainer>
-          <MorphErodeDilatePanel />
+          <MorphDilatePanel />
+          <Divider />
+          <MorphErodePanel />
         </StyledSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.ADVANCED:
@@ -36,6 +44,12 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
       return (
         <StyledSubPanelContainer wide>
           <HistogramPanel maskEnabled />
+        </StyledSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.CONVOLUTION:
+      return (
+        <StyledSubPanelContainer>
+          <ConvolutionPanel />
         </StyledSubPanelContainer>
       );
     default:

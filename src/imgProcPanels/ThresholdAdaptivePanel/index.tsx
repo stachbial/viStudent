@@ -23,7 +23,7 @@ import { StyledSubMethodForm, StyledInputsWrapper } from "./styled";
 // TODO: find out value ranges for blockSize and c
 // TODO: implement input debouncing
 
-const ThresholdAdaptiveOperation = () => {
+const ThresholdAdaptivePanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [threshParams, setThreshParams] = useState<TRESHOLD_ADPT_PARAMS>({
@@ -238,4 +238,4 @@ const ThresholdAdaptiveOperation = () => {
   );
 };
 
-export default ThresholdAdaptiveOperation;
+export default ThresholdAdaptivePanel;

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { StyledSubMethodForm, StyledNumberInputsWrapper } from "./styled";
 
-const ThresholdOperation = () => {
+const ThresholdBasicPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [threshParams, setThreshParams] = useState<TRESHOLD_PARAMS>({
@@ -163,4 +163,4 @@ const ThresholdOperation = () => {
   );
 };
 
-export default ThresholdOperation;
+export default ThresholdBasicPanel;
