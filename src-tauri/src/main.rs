@@ -683,6 +683,53 @@ fn convolve(img: &str, kernel: &str) -> String {
     format!("{:?}", output_vector)
 }
 
+#[tauri::command]
+fn gaussian_blur(
+    img: &str,
+    grayscale: &str,
+    kernelW: &str,
+    kernelH: &str,
+    stdDeviation: &str,
+) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(
+        &image_vector,
+        if grayscale == "true" {
+            IMREAD_GRAYSCALE
+        } else {
+            IMREAD_UNCHANGED
+        },
+    )
+    .unwrap();
+
+    let gauss_ksize = Size2i::new(
+        kernelW.parse::<i32>().unwrap(),
+        kernelH.parse::<i32>().unwrap(),
+    );
+    let mut output_mat = opencv::core::Mat::default();
+
+    opencv::imgproc::gaussian_blur(
+        &initial_mat,
+        &mut output_mat,
+        gauss_ksize,
+        stdDeviation.parse::<f64>().unwrap(),
+        0.0,
+        BORDER_DEFAULT,
+    )
+    .unwrap();
+
+    let output_vector = format_mat_to_u8_vector_img(&output_mat);
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in convolve() is: {:?}", fn_duration);
+
+    format!("{:?}", output_vector)
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -695,7 +742,8 @@ fn main() {
             morph_advanced,
             get_hist,
             apply_rect_mask,
-            convolve
+            convolve,
+            gaussian_blur
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,7 +1,7 @@
 import React from "react";
 import { FormControlLabel, Switch } from "@mui/material";
 
-const OperationSwitch = ({ checked, onChange, label }) => {
+const ToggleSwitch = ({ checked, onChange, label }) => {
   return (
     <FormControlLabel
       sx={{ margin: 0, justifyContent: "space-between" }}
@@ -14,4 +14,4 @@ const OperationSwitch = ({ checked, onChange, label }) => {
   );
 };
 
-export default OperationSwitch;
+export default ToggleSwitch;

@@ -8,6 +8,7 @@ import MorphErodePanel from "../../imgProcPanels/MorphErodePanel";
 import MorphAdvancedPanel from "../../imgProcPanels/MorphAdvancedPanel";
 import HistogramPanel from "../../imgProcPanels/HistogramPanel";
 import ConvolutionPanel from "../../imgProcPanels/ConvolutionPanel";
+import GaussianBlurPanel from "../../imgProcPanels/GaussianBlurPanel";
 import { StyledSubPanelContainer } from "./styled";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
@@ -50,6 +51,12 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
       return (
         <StyledSubPanelContainer wide>
           <ConvolutionPanel />
+        </StyledSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.GAUSSIAN_BLUR:
+      return (
+        <StyledSubPanelContainer>
+          <GaussianBlurPanel />
         </StyledSubPanelContainer>
       );
     default:

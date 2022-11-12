@@ -9,8 +9,8 @@ import { StyledWrapper, StyledBackground } from "./styled";
 const ControlMainPanel = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [displayedPanelData, setDisplayedPanelData] = useState({
-    TITLE: IMG_PROC_PANELS_DATA.SEGMENTATION.TITLE,
-    PANEL: IMG_PROC_PANELS_DATA.SEGMENTATION.PANELS.THRESHOLDING,
+    TITLE: IMG_PROC_PANELS_DATA.HISTOGRAMS.TITLE,
+    PANEL: IMG_PROC_PANELS_DATA.HISTOGRAMS.PANELS.GLOBAL_HIST,
   });
 
   const toggleDrawer = useCallback(() => {

@@ -11,7 +11,7 @@ import {
   MORPH_ADVANCED_PARAMS,
 } from "../../types/imgProcParamsTypes";
 import { Typography, TextField, Button, MenuItem } from "@mui/material";
-import OperationSwitch from "../../components/OperationSwitch";
+import OperationSwitch from "../../components/ToggleSwitch";
 import { StyledSubMethodForm, StyledNumberInputsWrapper } from "./styled";
 
 // TODO: checkout morphSize and secure it's input

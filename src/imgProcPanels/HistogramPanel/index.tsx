@@ -4,7 +4,7 @@ import { Button, TextField, Typography } from "@mui/material";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 import { serializeImageData } from "../../utils/dataFormattingHelpers";
 import { dispatchRustImageOperation } from "../../utils/dispatchRustImageOperation";
-import OperationSwitch from "../../components/OperationSwitch";
+import OperationSwitch from "../../components/ToggleSwitch";
 import HistogramChart from "../../modules/HistogramChart";
 import {
   StyledActionsContainer,
