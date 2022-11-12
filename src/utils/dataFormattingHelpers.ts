@@ -34,6 +34,7 @@ export const deserializeRustImageResponse = (rustImageData: string) => {
 };
 
 export const formatHistJSONtoChartData = (histJSON: string) => {
+  // TODO: try to remove as many "any" types as possible
   //parse stringified vectors as intArrays
   let parsedData = {};
   Object.keys(histJSON).map((key) => {
@@ -46,7 +47,7 @@ export const formatHistJSONtoChartData = (histJSON: string) => {
         .map((el: string) => parseInt(el)),
     };
   });
-  //convert to chartData format => { "name" : pixelIntensityValue, "Channel x": channel'sValuesArray}
+  //convert to chartData format => { "name" : pixelIntensityValue, "Kanał x": channel'sValuesArray}
   let parsedChartData = [];
   for (let i = 0; i < parsedData[0].length; i++) {
     let chartDataPoint: any = { name: i };

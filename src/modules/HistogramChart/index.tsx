@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import {
   LineChart,
-  AreaChart,
-  Area,
   Line,
   XAxis,
   YAxis,
@@ -18,7 +16,6 @@ import { theme } from "../../theme/theme";
 
 // TODO: colors edge case when more than 4 channels !!!!!!!
 // TODO: check out data normalization in rust
-// TODO: try to remove as many "any" types as possible
 
 const HistogramChart = ({ jsonData }) => {
   const [chartData, setChartData] = useState<any>(null);

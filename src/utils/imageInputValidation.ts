@@ -60,7 +60,7 @@ export const validateNumericInputValue = (
   if (parsedValue <= min) return min;
   if (step) {
     const modulo = parsedValue % step;
-    //number is highly likely to be correct if difference is smaller than step / 1000
+    //number is highly likely to be correct if difference is smaller than step / 1000 -> problem is due to float inaccuracy
     if (modulo !== 0 && step - modulo > step / 1000)
       return Math.floor(parsedValue / step) * step;
   }

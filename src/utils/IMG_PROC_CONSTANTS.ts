@@ -10,6 +10,9 @@ export const IMG_PROC_PANELS_DATA = {
     TITLE: "Filtracja liniowa",
     PANELS: {
       CONVOLUTION: "Konwolucja",
+      GAUSSIAN_BLUR: "Rozmycie Gauss'a",
+      MEDIAN_BLUR: "Rozmycie medianowe",
+      BILATERAL_BLUR: "Rozmycie dwustronne",
     },
   },
   FILTER_EDGE_DETECTION: {
@@ -28,12 +31,6 @@ export const IMG_PROC_PANELS_DATA = {
   SEGMENTATION: {
     TITLE: "Segmentacja",
     PANELS: { THRESHOLDING: "Progowanie", DIVISION: "Podział obszaru" },
-  },
-  CONTRAST: {
-    TITLE: "Korekcja kontrastu",
-    PANELS: {
-      EMPTY: "EMPTY",
-    },
   },
   CONTOURS: {
     TITLE: "Kontury",
@@ -54,6 +51,7 @@ export const IMG_PROC_METHODS = {
   GET_HIST: "get_hist",
   APPLY_RECT_MASK: "apply_rect_mask",
   CONVOLVE: "convolve",
+  GAUSSIAN_BLUR: "gaussian_blur",
 };
 
 export const THRESHOLD_TYPES = [

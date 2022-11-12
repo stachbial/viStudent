@@ -13,6 +13,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { StyledAccordionWrapper } from "./styled";
 import { theme } from "../../theme/theme";
+import { IMG_PROC_PANELS_DATA } from "../../utils/IMG_PROC_CONSTANTS";
 
 const ControlDrawer = ({
   open,
@@ -21,7 +22,7 @@ const ControlDrawer = ({
   itemsData: panelsData,
 }) => {
   const [expandedCategory, setExpandedCategory] = useState<string | false>(
-    false
+    IMG_PROC_PANELS_DATA.HISTOGRAMS.TITLE
   );
 
   const handleAccordionExpansion = useCallback(
