@@ -38,7 +38,7 @@ export const StyledEmptyMsgWrapper = styled("div")`
 export const StyledEmptyDataMsg = styled("div")`
   position: relative;
   margin-left: 50px;
-  padding: 15px 10px;
+  padding: 15px 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -50,7 +50,7 @@ export const StyledEmptyDataMsg = styled("div")`
     width: 100%;
     height: 100%;
     background-color: black;
-    opacity: 0.7;
+    opacity: 0.6;
     z-index: -1;
     border-radius: 10px;
   }

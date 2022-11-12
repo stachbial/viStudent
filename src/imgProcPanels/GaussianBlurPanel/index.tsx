@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback } from "react";
+import React, { useContext, useCallback } from "react";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
 import {
   useIntegerInputState,
@@ -9,6 +9,8 @@ import { Typography, TextField, Button } from "@mui/material";
 import ToggleSwitch from "../../components/ToggleSwitch";
 import { StyledSubMethodForm, StyledInputsRowWrapper } from "./styled";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
+
+// TODO : set step for integer numeric input
 
 const GaussianBlurPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);

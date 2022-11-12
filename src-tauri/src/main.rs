@@ -725,7 +725,41 @@ fn gaussian_blur(
     output_mat.release().unwrap();
 
     let fn_duration = fn_start.elapsed();
-    println!("Time elapsed in convolve() is: {:?}", fn_duration);
+    println!("Time elapsed in gaussian_blur() is: {:?}", fn_duration);
+
+    format!("{:?}", output_vector)
+}
+
+#[tauri::command]
+fn median_blur(img: &str, grayscale: &str, aperture: &str) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(
+        &image_vector,
+        if grayscale == "true" {
+            IMREAD_GRAYSCALE
+        } else {
+            IMREAD_UNCHANGED
+        },
+    )
+    .unwrap();
+
+    let mut output_mat = opencv::core::Mat::default();
+
+    opencv::imgproc::median_blur(
+        &initial_mat,
+        &mut output_mat,
+        aperture.parse::<i32>().unwrap(),
+    )
+    .unwrap();
+
+    let output_vector = format_mat_to_u8_vector_img(&output_mat);
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in median_blur() is: {:?}", fn_duration);
 
     format!("{:?}", output_vector)
 }
@@ -743,7 +777,8 @@ fn main() {
             get_hist,
             apply_rect_mask,
             convolve,
-            gaussian_blur
+            gaussian_blur,
+            median_blur
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

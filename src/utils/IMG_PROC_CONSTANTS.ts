@@ -47,7 +47,7 @@ export const IMG_PROC_PANELS_DATA = {
       CONVOLUTION: "Konwolucja",
       GAUSSIAN_BLUR: "Rozmycie Gauss'a",
       MEDIAN_BLUR: "Rozmycie medianowe",
-      BILATERAL_BLUR: "Rozmycie dwustronne",
+      BILATERAL_BLUR: "Rozmycie birateralne",
     },
   },
   FILTER_EDGE_DETECTION: {
@@ -92,6 +92,7 @@ export const IMG_PROC_METHODS = {
   APPLY_RECT_MASK: "apply_rect_mask",
   CONVOLVE: "convolve",
   GAUSSIAN_BLUR: "gaussian_blur",
+  MEDIAN_BLUR: "median_blur",
 };
 
 export const THRESHOLD_TYPES = [

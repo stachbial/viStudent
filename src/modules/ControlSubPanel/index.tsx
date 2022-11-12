@@ -1,6 +1,5 @@
 import React from "react";
 import { IMG_PROC_PANELS_DATA } from "../../utils/IMG_PROC_CONSTANTS";
-import Divider from "../../components/Divider";
 import ThresholdAdaptivePanel from "../../imgProcPanels/ThresholdAdaptivePanel";
 import ThresholdBasicPanel from "../../imgProcPanels/ThresholdBasicPanel";
 import MorphDilatePanel from "../../imgProcPanels/MorphDilatePanel";
@@ -9,6 +8,7 @@ import MorphAdvancedPanel from "../../imgProcPanels/MorphAdvancedPanel";
 import HistogramPanel from "../../imgProcPanels/HistogramPanel";
 import ConvolutionPanel from "../../imgProcPanels/ConvolutionPanel";
 import GaussianBlurPanel from "../../imgProcPanels/GaussianBlurPanel";
+import MedianBlurPanel from "../../imgProcPanels/MedianBlurPanel";
 import { StyledSubPanelContainer } from "./styled";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
@@ -65,6 +65,12 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
       return (
         <StyledSubPanelContainer>
           <GaussianBlurPanel />
+        </StyledSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.MEDIAN_BLUR:
+      return (
+        <StyledSubPanelContainer>
+          <MedianBlurPanel />
         </StyledSubPanelContainer>
       );
     default:
