@@ -61,3 +61,7 @@ export const formatHistJSONtoChartData = (histJSON: string) => {
 
   return parsedChartData;
 };
+
+export const serializeKernelValues = (kernel: number[][]) => {
+  return kernel.map((row) => `[${row.toString()}]`).toString();
+};

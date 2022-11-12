@@ -1,15 +1,4 @@
 export const IMG_PROC_PANELS_DATA = {
-  SEGMENTATION: {
-    TITLE: "Segmentacja",
-    PANELS: { THRESHOLDING: "Progowanie", DIVISION: "Podział obszaru" },
-  },
-  MORPH_OPERATIONS: {
-    TITLE: "Operacje morfologiczne",
-    PANELS: {
-      ERODE_DILATE: "Erozja i Dylatacja",
-      ADVANCED: "Warianty zaawansowane",
-    },
-  },
   HISTOGRAMS: {
     TITLE: "Histogramy",
     PANELS: {
@@ -23,11 +12,22 @@ export const IMG_PROC_PANELS_DATA = {
       CONVOLUTION: "Konwolucja",
     },
   },
-  FILTER_NON_LINEAR: {
-    TITLE: "Filtracja nieliniowa",
+  FILTER_EDGE_DETECTION: {
+    TITLE: "Filtracja wykrywająca krawędzie",
     PANELS: {
       EMPTY: "EMPTY",
     },
+  },
+  MORPH_OPERATIONS: {
+    TITLE: "Operacje morfologiczne",
+    PANELS: {
+      ERODE_DILATE: "Erozja i Dylatacja",
+      ADVANCED: "Warianty zaawansowane",
+    },
+  },
+  SEGMENTATION: {
+    TITLE: "Segmentacja",
+    PANELS: { THRESHOLDING: "Progowanie", DIVISION: "Podział obszaru" },
   },
   CONTRAST: {
     TITLE: "Korekcja kontrastu",
@@ -35,26 +35,8 @@ export const IMG_PROC_PANELS_DATA = {
       EMPTY: "EMPTY",
     },
   },
-  CONVOLUTION: {
-    TITLE: "Konwolucja",
-    PANELS: {
-      EMPTY: "EMPTY",
-    },
-  },
-  EDGE_DETECTION: {
-    TITLE: "Wykrywanie krawędzi",
-    PANELS: {
-      EMPTY: "EMPTY",
-    },
-  },
   CONTOURS: {
     TITLE: "Kontury",
-    PANELS: {
-      EMPTY: "EMPTY",
-    },
-  },
-  BLUR: {
-    TITLE: "Rozmycie",
     PANELS: {
       EMPTY: "EMPTY",
     },
@@ -71,6 +53,7 @@ export const IMG_PROC_METHODS = {
   MORPH_ADVANCED: "morph_advanced",
   GET_HIST: "get_hist",
   APPLY_RECT_MASK: "apply_rect_mask",
+  CONVOLVE: "convolve",
 };
 
 export const THRESHOLD_TYPES = [

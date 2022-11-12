@@ -48,7 +48,7 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
       );
     case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.CONVOLUTION:
       return (
-        <StyledSubPanelContainer>
+        <StyledSubPanelContainer wide>
           <ConvolutionPanel />
         </StyledSubPanelContainer>
       );

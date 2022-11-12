@@ -31,7 +31,6 @@ export const supportedImageExtensions = [
   "bmp",
   "ico",
   "webp",
-  // "tiff",
 ];
 
 export const validateImageInput = (fileType: string) => {
@@ -42,4 +41,29 @@ export const validateImageInput = (fileType: string) => {
     return true;
 
   return false;
+};
+
+export const validateNumericInputValue = (
+  value: string,
+  initialVal: number,
+  min: number,
+  max: number,
+  parseFn:
+    | ((string: string, radix?: number) => number)
+    | ((string: string) => number),
+  step?: number
+) => {
+  const parsedValue = parseFn(value);
+
+  if (isNaN(parsedValue)) return initialVal; // TODO: consider debouncing to allow empty str for a moment
+  if (parsedValue >= max) return max;
+  if (parsedValue <= min) return min;
+  if (step) {
+    const modulo = parsedValue % step;
+    //number is highly likely to be correct if difference is smaller than step / 1000
+    if (modulo !== 0 && step - modulo > step / 1000)
+      return Math.floor(parsedValue / step) * step;
+  }
+
+  return parsedValue;
 };

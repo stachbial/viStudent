@@ -7,8 +7,8 @@ use std::ffi::c_uchar;
 
 use opencv::{
     core::{
-        Point2i, Size2i, BORDER_CONSTANT, CV_16U, CV_64F, CV_8S, CV_8U, NORM_MINMAX,
-        ROTATE_90_COUNTERCLOCKWISE,
+        Point2i, Size2i, BORDER_CONSTANT, BORDER_DEFAULT, CV_16U, CV_32S, CV_32SC1, CV_32SC2,
+        CV_64F, CV_64FC1, CV_8S, CV_8U, CV_8UC1, NORM_MINMAX, ROTATE_90_COUNTERCLOCKWISE,
     },
     // videoio,
     imgcodecs::{IMREAD_GRAYSCALE, IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT},
@@ -57,6 +57,36 @@ fn deserialize_img_string(img_str: &str) -> opencv::types::VectorOfu8 {
         .split(",")
         .filter_map(|el| el.parse::<u8>().ok())
         .collect();
+}
+
+fn deserialize_kernel_string(kernel: &str) -> Mat {
+    let mut str_rows: Vec<&str> = kernel.split("],[").collect();
+    let kernel_size = str_rows.len() as i32;
+    let s = opencv::core::Scalar::default();
+    let mut mat_rows = Vec::new();
+    let mut kernel_mat =
+        opencv::core::Mat::new_rows_cols_with_default(kernel_size, kernel_size, CV_64FC1, s)
+            .unwrap();
+
+    for i in str_rows {
+        let mut z = str::replace(i, "[", "");
+        z = str::replace(&z, "]", "");
+
+        let row: Vec<f64> = z
+            .split(",")
+            .filter_map(|el| el.parse::<f64>().ok())
+            .collect();
+
+        mat_rows.push(row);
+    }
+    for row in 0..kernel_size {
+        for col in 0..kernel_size {
+            let mut x = kernel_mat.at_2d_mut::<f64>(row, col).unwrap();
+            *x = mat_rows[row as usize][col as usize];
+        }
+    }
+
+    return kernel_mat;
 }
 
 fn format_mat_to_u8_vector_img(output_mat: &Mat) -> opencv::types::VectorOfu8 {
@@ -614,6 +644,37 @@ fn apply_rect_mask(
     format!("{:?}", output_vector)
 }
 
+#[tauri::command]
+fn convolve(img: &str, kernel: &str) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
+
+    let kernel_mat = deserialize_kernel_string(kernel);
+    let mut output_mat = opencv::core::Mat::default();
+
+    opencv::imgproc::filter_2d(
+        &initial_mat,
+        &mut output_mat,
+        -1,
+        &kernel_mat,
+        Point2i::new(-1, -1),
+        0.0,
+        BORDER_DEFAULT,
+    )
+    .unwrap();
+
+    let output_vector = format_mat_to_u8_vector_img(&output_mat);
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in convolve() is: {:?}", fn_duration);
+
+    format!("{:?}", output_vector)
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -625,7 +686,8 @@ fn main() {
             erosion,
             morph_advanced,
             get_hist,
-            apply_rect_mask
+            apply_rect_mask,
+            convolve
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
