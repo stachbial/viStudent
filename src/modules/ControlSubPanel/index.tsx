@@ -13,20 +13,28 @@ import { StyledSubPanelContainer } from "./styled";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
   switch (displayedSubPanel) {
-    case IMG_PROC_PANELS_DATA.SEGMENTATION.PANELS.THRESHOLDING:
+    case IMG_PROC_PANELS_DATA.SEGMENTATION.PANELS.THRESHOLD_BASIC:
       return (
         <StyledSubPanelContainer>
           <ThresholdBasicPanel />
-          <Divider />
+        </StyledSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.SEGMENTATION.PANELS.THRESHOLD_ADAPTIVE:
+      return (
+        <StyledSubPanelContainer>
           <ThresholdAdaptivePanel />
         </StyledSubPanelContainer>
       );
-    case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.ERODE_DILATE:
+    case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.ERODE:
+      return (
+        <StyledSubPanelContainer>
+          <MorphErodePanel />
+        </StyledSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.DILATE:
       return (
         <StyledSubPanelContainer>
           <MorphDilatePanel />
-          <Divider />
-          <MorphErodePanel />
         </StyledSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.ADVANCED:

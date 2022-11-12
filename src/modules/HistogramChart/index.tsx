@@ -47,7 +47,7 @@ const HistogramChart = ({ jsonData }) => {
           dataKey="name"
           minTickGap={500}
           label={{
-            value: "Intensywność odcienia",
+            value: "Intensywność (natężenie) odcienia",
             fill: theme.palette.grey["100"],
           }}
         />

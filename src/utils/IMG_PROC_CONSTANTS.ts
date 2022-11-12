@@ -59,13 +59,18 @@ export const IMG_PROC_PANELS_DATA = {
   MORPH_OPERATIONS: {
     TITLE: "Operacje morfologiczne",
     PANELS: {
-      ERODE_DILATE: "Erozja i Dylatacja",
+      ERODE: "Erozja",
+      DILATE: "Dylatacja",
       ADVANCED: "Warianty zaawansowane",
     },
   },
   SEGMENTATION: {
     TITLE: "Segmentacja",
-    PANELS: { THRESHOLDING: "Progowanie", DIVISION: "Podział obszaru" },
+    PANELS: {
+      THRESHOLD_BASIC: "Progowanie proste",
+      THRESHOLD_ADAPTIVE: "Progowanie adaptacyjne",
+      DIVISION: "Podział obszaru",
+    },
   },
   CONTOURS: {
     TITLE: "Kontury",
