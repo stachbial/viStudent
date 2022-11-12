@@ -68,6 +68,15 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
           maskY: maskY,
         },
       });
+    } else {
+      if (grayscale)
+        processImage({
+          type: IMG_PROC_METHODS.LOAD_IMAGE,
+          payload: {
+            img: serializeImageData(currentImageData),
+            grayscale: grayscale.toString(),
+          },
+        });
     }
 
     const json_res = JSON.parse(

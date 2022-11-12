@@ -42,6 +42,7 @@ const LoadImageModule = () => {
       type: IMG_PROC_METHODS.LOAD_IMAGE,
       payload: {
         img: serializeImageData(chosenImage.imageData),
+        grayscale: "false",
       },
     });
 

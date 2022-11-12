@@ -82,6 +82,7 @@ const WebcamLightbox = ({ open, onBackdropClose, onConfirm }) => {
       type: IMG_PROC_METHODS.LOAD_IMAGE,
       payload: {
         img: serializeImageData(screenShotImageData.screenshotData),
+        grayscale: "false",
       },
     });
 

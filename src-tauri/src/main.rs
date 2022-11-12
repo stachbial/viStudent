@@ -174,12 +174,20 @@ fn create_rect_mask(
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 #[tauri::command]
-fn load_image(img: &str) -> String {
+fn load_image(img: &str, grayscale: &str) -> String {
     let fn_start = std::time::Instant::now();
 
     let image_vector = deserialize_img_string(img);
 
-    let mut mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
+    let mut mat = opencv::imgcodecs::imdecode(
+        &image_vector,
+        if grayscale == "true" {
+            IMREAD_GRAYSCALE
+        } else {
+            IMREAD_UNCHANGED
+        },
+    )
+    .unwrap();
 
     let output_vector = format_mat_to_u8_vector_img(&mat);
     mat.release().unwrap();
