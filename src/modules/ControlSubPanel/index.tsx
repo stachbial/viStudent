@@ -9,6 +9,7 @@ import HistogramPanel from "../../imgProcPanels/HistogramPanel";
 import ConvolutionPanel from "../../imgProcPanels/ConvolutionPanel";
 import GaussianBlurPanel from "../../imgProcPanels/GaussianBlurPanel";
 import MedianBlurPanel from "../../imgProcPanels/MedianBlurPanel";
+import BilateralBlurPanel from "../../imgProcPanels/BilateralBlurPanel";
 import { StyledSubPanelContainer } from "./styled";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
@@ -71,6 +72,12 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
       return (
         <StyledSubPanelContainer>
           <MedianBlurPanel />
+        </StyledSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.BILATERAL_BLUR:
+      return (
+        <StyledSubPanelContainer>
+          <BilateralBlurPanel />
         </StyledSubPanelContainer>
       );
     default:

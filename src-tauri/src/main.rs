@@ -764,6 +764,49 @@ fn median_blur(img: &str, grayscale: &str, aperture: &str) -> String {
     format!("{:?}", output_vector)
 }
 
+#[tauri::command]
+fn bilateral_blur(
+    img: &str,
+    grayscale: &str,
+    d: &str,
+    sigmaColor: &str,
+    sigmaSpace: &str,
+) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(
+        &image_vector,
+        if grayscale == "true" {
+            IMREAD_GRAYSCALE
+        } else {
+            IMREAD_UNCHANGED
+        },
+    )
+    .unwrap();
+
+    let mut output_mat = opencv::core::Mat::default();
+
+    opencv::imgproc::bilateral_filter(
+        &initial_mat,
+        &mut output_mat,
+        d.parse::<i32>().unwrap(),
+        sigmaColor.parse::<f64>().unwrap(),
+        sigmaSpace.parse::<f64>().unwrap(),
+        BORDER_DEFAULT,
+    )
+    .unwrap();
+
+    let output_vector = format_mat_to_u8_vector_img(&output_mat);
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in bilateral_blur() is: {:?}", fn_duration);
+
+    format!("{:?}", output_vector)
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -778,7 +821,8 @@ fn main() {
             apply_rect_mask,
             convolve,
             gaussian_blur,
-            median_blur
+            median_blur,
+            bilateral_blur
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

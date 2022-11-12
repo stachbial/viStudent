@@ -93,6 +93,7 @@ export const IMG_PROC_METHODS = {
   CONVOLVE: "convolve",
   GAUSSIAN_BLUR: "gaussian_blur",
   MEDIAN_BLUR: "median_blur",
+  BILATERAL_BLUR: "bilateral_blur",
 };
 
 export const THRESHOLD_TYPES = [
