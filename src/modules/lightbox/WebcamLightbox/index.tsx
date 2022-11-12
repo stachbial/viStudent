@@ -55,7 +55,7 @@ const WebcamLightbox = ({ open, onBackdropClose, onConfirm }) => {
     const canvas = webcamRef.current.getCanvas() as HTMLCanvasElement;
 
     if (canvas) {
-      const res = await fetch(canvas.toDataURL("image/png"));
+      const res = await fetch(canvas.toDataURL("image/jpeg"));
       const blob = await res.blob();
 
       const reader = new FileReader();
