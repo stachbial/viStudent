@@ -13,7 +13,7 @@ import {
 } from "./styled";
 import {
   useSwitchInputState,
-  useNumericInputState,
+  useIntegerInputState,
 } from "../../hooks/inputHooks";
 
 // TODO: enhance mask inputs validation -> negative numbers or empty input
@@ -23,24 +23,12 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
     ImageProcessingContext
   );
   const [histogramJsonData, setHistogramJsonData] = useState<any>(null);
-  const [grayscale, setGrayscale] = useSwitchInputState(false);
-  const [normalize, setNormalize] = useSwitchInputState(true);
-  const { value: maskH, onChange: setMaskH } = useNumericInputState(
-    0,
-    parseInt
-  );
-  const { value: maskW, onChange: setMaskW } = useNumericInputState(
-    0,
-    parseInt
-  );
-  const { value: maskX, onChange: setMaskX } = useNumericInputState(
-    0,
-    parseInt
-  );
-  const { value: maskY, onChange: setMaskY } = useNumericInputState(
-    0,
-    parseInt
-  );
+  const [grayscale, toggleGrayscale] = useSwitchInputState(false);
+  const [normalize, toggleNormalize] = useSwitchInputState(true);
+  const [maskH, onChangeMaskH] = useIntegerInputState(0, 0, 10000, 1);
+  const [maskW, onChangeMaskW] = useIntegerInputState(0, 0, 10000, 1);
+  const [maskX, onChangeMaskX] = useIntegerInputState(0, 0, 10000, 1);
+  const [maskY, onChangeMaskY] = useIntegerInputState(0, 0, 10000, 1);
 
   const handleHistOperation = useCallback(async () => {
     const res = await dispatchRustImageOperation({
@@ -49,10 +37,10 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
         img: serializeImageData(currentImageData),
         grayscale: grayscale.toString(),
         normalize: normalize.toString(),
-        maskH: maskH,
-        maskW: maskW,
-        maskX: maskX,
-        maskY: maskY,
+        maskH: maskH.toString(),
+        maskW: maskW.toString(),
+        maskX: maskX.toString(),
+        maskY: maskY.toString(),
       },
     });
 
@@ -61,10 +49,10 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
         type: IMG_PROC_METHODS.APPLY_RECT_MASK,
         payload: {
           grayscale: grayscale.toString(),
-          maskH: maskH,
-          maskW: maskW,
-          maskX: maskX,
-          maskY: maskY,
+          maskH: maskH.toString(),
+          maskW: maskW.toString(),
+          maskX: maskX.toString(),
+          maskY: maskY.toString(),
         },
       });
     } else {
@@ -103,7 +91,7 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
             color="secondary"
             sx={{ flex: "1" }}
             value={maskH}
-            onChange={setMaskH}
+            onChange={onChangeMaskH}
           />
           <TextField
             size="small"
@@ -120,7 +108,7 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
             color="secondary"
             sx={{ flex: "1" }}
             value={maskW}
-            onChange={setMaskW}
+            onChange={onChangeMaskW}
           />
           <TextField
             size="small"
@@ -137,7 +125,7 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
             color="secondary"
             sx={{ flex: "1" }}
             value={maskX}
-            onChange={setMaskX}
+            onChange={onChangeMaskX}
           />
           <TextField
             size="small"
@@ -154,18 +142,18 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
             color="secondary"
             sx={{ flex: "1" }}
             value={maskY}
-            onChange={setMaskY}
+            onChange={onChangeMaskY}
           />
         </StyledMaskOptionsContainer>
       )}
       <StyledActionsContainer>
         <OperationSwitch
-          onChange={setGrayscale}
+          onChange={toggleGrayscale}
           checked={grayscale}
           label="Konwertuj na obraz monochromatyczny"
         />
         <OperationSwitch
-          onChange={setNormalize}
+          onChange={toggleNormalize}
           checked={normalize}
           label="Normalizuj wyniki w przedziale < 0, 100 >"
         />

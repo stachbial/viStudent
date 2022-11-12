@@ -1,29 +1,72 @@
 import React, { useState, useCallback } from "react";
+import { validateNumericInputValue } from "../utils/imageInputValidation";
 
-// TODO: check numeric input initial value - why fcn not working?
-
-export const useNumericInputState = (
+export const useIntegerInputState = (
   initialValue: number,
-  parseFn?: (...params: any) => number
-) => {
-  const [inputValue, setInputValue] = useState<string>(initialValue.toString());
+  min: number,
+  max: number,
+  step?: number
+): [
+  number,
+  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+] => {
+  const [inputValue, setInputValue] = useState<number>(initialValue);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       event.stopPropagation();
 
-      if (parseFn) {
-        setInputValue(parseFn(event.target.value).toString());
-      } else {
-        setInputValue(event.target.value.toString());
-      }
+      setInputValue(
+        validateNumericInputValue(
+          event.target.value,
+          initialValue,
+          min,
+          max,
+          parseInt,
+          step
+        )
+      );
     },
-    []
+    [inputValue, setInputValue]
   );
-  return { value: inputValue, onChange: handleInputChange };
+
+  return [inputValue, handleInputChange];
+};
+export const useFloatInputState = (
+  initialValue: number,
+  min: number,
+  max: number,
+  step?: number
+): [
+  number,
+  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+] => {
+  const [inputValue, setInputValue] = useState<number>(initialValue);
+
+  const handleInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      event.stopPropagation();
+
+      setInputValue(
+        validateNumericInputValue(
+          event.target.value,
+          initialValue,
+          min,
+          max,
+          parseFloat,
+          step
+        )
+      );
+    },
+    [inputValue, setInputValue]
+  );
+
+  return [inputValue, handleInputChange];
 };
 
-export const useSwitchInputState = (initialValue?: boolean) => {
+export const useSwitchInputState = (
+  initialValue?: boolean
+): [boolean, () => void] => {
   const [inputValue, setInputValue] = useState<boolean>(initialValue || false);
 
   const handleSwitchToggle = useCallback(() => {
