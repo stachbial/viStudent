@@ -53,7 +53,7 @@ export const formatHistJSONtoChartData = (histJSON: string) => {
     Object.keys(parsedData).map((channel) => {
       chartDataPoint = {
         ...chartDataPoint,
-        [`Channel ${channel}`]: parsedData[channel][i],
+        [`Kanał ${channel}`]: parsedData[channel][i],
       };
     });
     parsedChartData = [...parsedChartData, chartDataPoint];

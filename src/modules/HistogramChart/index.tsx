@@ -76,7 +76,7 @@ const HistogramChart = ({ jsonData }) => {
             return (
               <Line
                 type="monotone"
-                dataKey={`Channel ${index}`}
+                dataKey={`Kanał ${index}`}
                 stroke={chartLineColors[index]}
                 dot={false}
                 strokeWidth={1.5}
