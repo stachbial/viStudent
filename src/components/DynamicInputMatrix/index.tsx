@@ -9,7 +9,7 @@ import {
   StyledMatrixActions,
   StyledMatrixTitle,
 } from "./styled";
-import { validateNumericInputValue } from "../../utils/imageInputValidation";
+import { validateNumericInputValue } from "../../utils/inputValidation";
 import { theme } from "../../theme/theme";
 
 const MatrixRow = ({

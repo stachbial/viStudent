@@ -2,7 +2,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { Button } from "@mui/material";
 import LoopIcon from "@mui/icons-material/Loop";
 import { getImageDataFromBuffer } from "../../utils/dataFormattingHelpers";
-import { validateImageInput } from "../../utils/imageInputValidation";
+import { validateImageInput } from "../../utils/inputValidation";
 import SupportedFormatsDialog from "../dialogs/SupportedFormatsDialog";
 
 // TODO: adjust next/image formats to opencv formats!! !!!

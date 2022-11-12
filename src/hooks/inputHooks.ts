@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { validateNumericInputValue } from "../utils/imageInputValidation";
+import { validateNumericInputValue } from "../utils/inputValidation";
 
 export const useIntegerInputState = (
   initialValue: number,

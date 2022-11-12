@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import ErrorDialog from "../ErrorDialog";
 import { StyledExtensionCard, StyledSubtitle } from "../styled";
-import { supportedImageExtensions } from "../../../utils/imageInputValidation";
+import { SUPPORTED_IMG_EXTENSIONS } from "../../../utils/IMG_PROC_CONSTANTS";
 
 const SupportedFormatsDialog = ({ open, onClose }) => {
   return (
@@ -14,7 +14,7 @@ const SupportedFormatsDialog = ({ open, onClose }) => {
         Obsługiwane rozszerzenia plików zdjęciowych:
       </StyledSubtitle>
       <Grid container spacing={2}>
-        {supportedImageExtensions.map((item) => {
+        {SUPPORTED_IMG_EXTENSIONS.map((item) => {
           return (
             <Grid item key={item}>
               <StyledExtensionCard>{`.${item}`}</StyledExtensionCard>
