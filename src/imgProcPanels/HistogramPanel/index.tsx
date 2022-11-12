@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useContext } from "react";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 import { serializeImageData } from "../../utils/dataFormattingHelpers";
 import { dispatchRustImageOperation } from "../../utils/dispatchRustImageOperation";
@@ -10,6 +10,8 @@ import {
   StyledActionsContainer,
   StyledHistContainer,
   StyledMaskOptionsContainer,
+  StyledEmptyMsgWrapper,
+  StyledEmptyDataMsg,
 } from "./styled";
 import {
   useSwitchInputState,
@@ -166,6 +168,16 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
         </Button>
       </StyledActionsContainer>
       <StyledHistContainer short={maskEnabled}>
+        {!histogramJsonData && (
+          <StyledEmptyMsgWrapper>
+            <StyledEmptyDataMsg>
+              <Typography>BRAK DANYCH HISTOGRAMU !</Typography>
+              <Typography>
+                Wyznacz histogram w celu uzyskania wykresu.
+              </Typography>
+            </StyledEmptyDataMsg>
+          </StyledEmptyMsgWrapper>
+        )}
         <HistogramChart jsonData={histogramJsonData} />
       </StyledHistContainer>
     </>
