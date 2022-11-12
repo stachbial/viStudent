@@ -52,8 +52,6 @@ const ThresholdBasicPanel = () => {
   );
 
   const handleOnChangeGrayScale = useCallback(() => {
-    event.stopPropagation();
-
     setThreshParams((prev) => {
       return { ...prev, grayscale: !prev.grayscale };
     });

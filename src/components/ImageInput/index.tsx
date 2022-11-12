@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState, useCallback } from "react";
 import { Button } from "@mui/material";
 import LoopIcon from "@mui/icons-material/Loop";
 import { getImageDataFromBuffer } from "../../utils/dataFormattingHelpers";
@@ -27,31 +27,34 @@ const ImageInput = ({
   const [showDialog, setShowDialog] = useState(false);
   const inputRef = useRef(null);
 
-  const onCloseDialog = () => {
+  const onCloseDialog = useCallback(() => {
     setShowDialog(false);
-  };
+  }, [setShowDialog]);
 
-  const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
+  const onChangeHandler = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      event.stopPropagation();
+      event.preventDefault();
 
-    if (event.target.files && event.target.files[0]) {
-      if (validateImageInput(event.target.files[0].type)) {
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(event.target.files[0]);
+      if (event.target.files && event.target.files[0]) {
+        if (validateImageInput(event.target.files[0].type)) {
+          const reader = new FileReader();
+          reader.readAsArrayBuffer(event.target.files[0]);
 
-        reader.onload = (e) => {
-          const { imageUrl, uint8imageData } = getImageDataFromBuffer(
-            e.target.result as ArrayBuffer
-          );
-          setImageData({ imageUrl: imageUrl, imageData: uint8imageData });
-        };
-      } else {
-        setShowDialog(true);
+          reader.onload = (e) => {
+            const { imageUrl, uint8imageData } = getImageDataFromBuffer(
+              e.target.result as ArrayBuffer
+            );
+            setImageData({ imageUrl: imageUrl, imageData: uint8imageData });
+          };
+        } else {
+          setShowDialog(true);
+        }
+        if (inputRef.current?.value) inputRef.current.value = "";
       }
-      if (inputRef.current?.value) inputRef.current.value = "";
-    }
-  };
+    },
+    [setImageData, setShowDialog]
+  );
 
   return (
     <>

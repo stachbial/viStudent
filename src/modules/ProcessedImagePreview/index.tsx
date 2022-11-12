@@ -31,7 +31,7 @@ const ProcessedImagePreview = () => {
 
   const handleHomeButton = useCallback(() => {
     router.push(routes.home);
-  }, []);
+  }, [router]);
 
   const handleUndoButton = useCallback(() => {
     undoProcessImage();

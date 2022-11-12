@@ -28,7 +28,7 @@ import {
   StyledExitButtonWrapper,
 } from "../styled";
 
-const WebcamLightbox = ({ open, onBackdropClose, onConfirm }) => {
+const WebcamLightbox = ({ open, onBackdropClose }) => {
   const router = useRouter();
   const { processImage } = useContext(ImageProcessingContext);
   const [deviceId, setDeviceId] = useState<string | null>(null);

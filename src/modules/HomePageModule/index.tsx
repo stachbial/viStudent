@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useCallback } from "react";
 import { useRouter } from "next/router";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
 import { Grid } from "@mui/material";
@@ -26,18 +26,19 @@ const HomePageModule = () => {
     imageData: Uint8Array;
   } | null>(null);
 
-  const handleCloseImagePreview = () => {
+  const handleCloseImagePreview = useCallback(() => {
     setChosenImage(null);
-  };
-  const handleCloseWebcamPreview = () => {
+  }, [setChosenImage]);
+
+  const handleCloseWebcamPreview = useCallback(() => {
     setShowWebcamPreview(false);
-  };
+  }, [setShowWebcamPreview]);
 
-  const handleOpenWebcamPreview = () => {
+  const handleOpenWebcamPreview = useCallback(() => {
     setShowWebcamPreview(true);
-  };
+  }, [setShowWebcamPreview]);
 
-  const handleConfirmImage = () => {
+  const handleConfirmImage = useCallback(() => {
     processImage({
       type: IMG_PROC_METHODS.LOAD_IMAGE,
       payload: {
@@ -47,7 +48,7 @@ const HomePageModule = () => {
     });
 
     router.push(routes.imageProcessingPage);
-  };
+  }, [chosenImage, router]);
 
   return (
     <Page
@@ -80,7 +81,6 @@ const HomePageModule = () => {
       <WebcamLightbox
         open={showWebcamPreview}
         onBackdropClose={handleCloseWebcamPreview}
-        onConfirm={() => {}}
       />
     </Page>
   );
