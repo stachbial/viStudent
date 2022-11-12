@@ -37,11 +37,12 @@ export const StyledEmptyMsgWrapper = styled("div")`
 
 export const StyledEmptyDataMsg = styled("div")`
   position: relative;
+  margin-left: 50px;
+  padding: 15px 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 15px 10px;
 
   &::before {
     content: "";
