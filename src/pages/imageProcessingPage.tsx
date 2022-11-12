@@ -1,7 +1,7 @@
-import ImageProcessingModule from "../modules/ImageProcessingModule";
+import ImgProcPageModule from "../modules/ImgProcPageModule";
 
 const imageProcessingPage = () => {
-  return <ImageProcessingModule />;
+  return <ImgProcPageModule />;
 };
 
 export default imageProcessingPage;

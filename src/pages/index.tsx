@@ -1,9 +1,7 @@
-import HomeModule from "../modules/HomeModule";
-
-// import {StyledLinkContainer} from
+import HomePageModule from "../modules/HomePageModule";
 
 function HomePage() {
-  return <HomeModule />;
+  return <HomePageModule />;
 }
 
 export default HomePage;

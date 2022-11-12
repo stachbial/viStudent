@@ -1,5 +1,20 @@
 import styled from "@emotion/styled";
 
+export const StyledBackdrop = styled("div")`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.6;
+`;
+
+export const StyledTextWrapper = styled("div")`
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 0.8rem;
+`;
+
 export const StyledCard = styled("div")`
   position: relative;
   border-radius: 1rem;
@@ -25,20 +40,4 @@ export const StyledCard = styled("div")`
       transform: scale(1.05);
     }
   }
-`;
-
-export const StyledBackdrop = styled("div")`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  opacity: 0.6;
-`;
-
-export const StyledTextWrapper = styled("div")`
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.05);
-  background-color: rgba(0, 0, 0, 0.4);
-  padding: 0.5rem 1rem;
-  border-radius: 0.8rem;
 `;

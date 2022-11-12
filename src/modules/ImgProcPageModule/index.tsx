@@ -1,7 +1,7 @@
 import ControlPanel from "../ControlMainPanel";
 import ProcessedImagePreview from "../ProcessedImagePreview";
 
-const ImageProcessingModule = () => {
+const ImgProcPageModule = () => {
   return (
     <>
       <ControlPanel />
@@ -10,4 +10,4 @@ const ImageProcessingModule = () => {
   );
 };
 
-export default ImageProcessingModule;
+export default ImgProcPageModule;

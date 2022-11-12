@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
 import { Grid } from "@mui/material";
 import pickFileImage from "../../assets/images/pick-file.jpg";
-import takePhotoImage from "../../assets/images/take-photo.jpg";
+import cameraImage from "../../assets/images/use-camera.jpg";
 import Page from "../../components/Page";
 import ImageCardsWrapper from "../../components/ImageCardsWrapper";
 import ImageCard from "../../components/ImageCard";
@@ -16,7 +16,7 @@ import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
 // TODO: rozkminic czy nie sciagnac stany z webview modal i uzywac contextu tylko tu
 
-const LoadImageModule = () => {
+const HomePageModule = () => {
   const router = useRouter();
   const { processImage } = useContext(ImageProcessingContext);
 
@@ -64,7 +64,7 @@ const LoadImageModule = () => {
         </Grid>
         <Grid item>
           <ImageCard
-            src={takePhotoImage.src}
+            src={cameraImage.src}
             text="ZRÓB ZDJĘCIE"
             onClick={handleOpenWebcamPreview}
           />
@@ -86,4 +86,4 @@ const LoadImageModule = () => {
   );
 };
 
-export default LoadImageModule;
+export default HomePageModule;

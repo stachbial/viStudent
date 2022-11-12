@@ -11,7 +11,7 @@ interface Props {
 const ImageCard = ({ src, text, onClick }: Props) => {
   return (
     <StyledCard onClick={onClick}>
-      <Image src={src} width={300} height={400} objectFit="cover" />
+      <Image src={src} width={450} height={500} objectFit="cover" />
       <StyledBackdrop />
       <StyledTextWrapper>
         <Typography fontWeight="bold">{text}</Typography>
