@@ -11,6 +11,7 @@ import GaussianBlurPanel from "../../imgProcPanels/GaussianBlurPanel";
 import MedianBlurPanel from "../../imgProcPanels/MedianBlurPanel";
 import BilateralBlurPanel from "../../imgProcPanels/BilateralBlurPanel";
 import CannyEdgesPanel from "../../imgProcPanels/CannyEdgesPanel";
+import SobelEdgesPanel from "../../imgProcPanels/SobelEdgesPanel";
 import { StyledSubPanelContainer } from "./styled";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
@@ -85,6 +86,12 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
       return (
         <StyledSubPanelContainer>
           <CannyEdgesPanel />
+        </StyledSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.FILTER_ADVANCED.PANELS.SOBEL_EDGES:
+      return (
+        <StyledSubPanelContainer>
+          <SobelEdgesPanel />
         </StyledSubPanelContainer>
       );
     default:

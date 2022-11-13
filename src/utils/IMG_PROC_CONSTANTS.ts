@@ -97,6 +97,7 @@ export const IMG_PROC_METHODS = {
   MEDIAN_BLUR: "median_blur",
   BILATERAL_BLUR: "bilateral_blur",
   CANNY_EDGES: "canny_edges",
+  SOBEL_EDGES: "sobel_edges",
 };
 
 export const THRESHOLD_TYPES = [

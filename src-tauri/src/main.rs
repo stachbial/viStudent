@@ -7,8 +7,8 @@ use std::ffi::c_uchar;
 
 use opencv::{
     core::{
-        Point2i, Size2i, BORDER_CONSTANT, BORDER_DEFAULT, CV_16U, CV_32S, CV_32SC1, CV_32SC2,
-        CV_64F, CV_64FC1, CV_8S, CV_8U, CV_8UC1, NORM_MINMAX, ROTATE_90_COUNTERCLOCKWISE,
+        Point2i, Size2i, BORDER_CONSTANT, BORDER_DEFAULT, CV_16S, CV_16U, CV_32S, CV_32SC1,
+        CV_32SC2, CV_64F, CV_64FC1, CV_8S, CV_8U, CV_8UC1, NORM_MINMAX, ROTATE_90_COUNTERCLOCKWISE,
     },
     // videoio,
     imgcodecs::{IMREAD_GRAYSCALE, IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT},
@@ -836,6 +836,46 @@ fn canny_edges(img: &str, threshold1: &str, threshold2: &str, L2gradient: &str) 
     format!("{:?}", output_vector)
 }
 
+#[tauri::command]
+fn sobel_edges(img: &str, dx: &str, dy: &str, ksize: &str) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE).unwrap();
+
+    //for holding gradient values in CS_16S
+    // let mut grad_x = opencv::core::Mat::default();
+    // let mut grad_y = opencv::core::Mat::default();
+    // //for holding gradient values in CV_8U
+    // let mut grad_x = opencv::core::Mat::default();
+    // let mut grad_y = opencv::core::Mat::default();
+
+    let mut output_mat = opencv::core::Mat::default();
+
+    //calculate sobel's gradients for every direction
+    opencv::imgproc::sobel(
+        &initial_mat,
+        &mut output_mat,
+        CV_8U,
+        dx.parse::<i32>().unwrap(),
+        dy.parse::<i32>().unwrap(),
+        ksize.parse::<i32>().unwrap(),
+        1.0,
+        0.0,
+        BORDER_DEFAULT,
+    )
+    .unwrap();
+
+    let output_vector = format_mat_to_u8_vector_img(&output_mat);
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in sobel_edges() is: {:?}", fn_duration);
+
+    format!("{:?}", output_vector)
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -852,7 +892,8 @@ fn main() {
             gaussian_blur,
             median_blur,
             bilateral_blur,
-            canny_edges
+            canny_edges,
+            sobel_edges
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
