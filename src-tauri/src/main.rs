@@ -807,6 +807,35 @@ fn bilateral_blur(
     format!("{:?}", output_vector)
 }
 
+#[tauri::command]
+fn canny_edges(img: &str, threshold1: &str, threshold2: &str, L2gradient: &str) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE).unwrap();
+
+    let mut output_mat = opencv::core::Mat::default();
+
+    opencv::imgproc::canny(
+        &initial_mat,
+        &mut output_mat,
+        threshold1.parse::<f64>().unwrap(),
+        threshold2.parse::<f64>().unwrap(),
+        3,
+        if L2gradient == "true" { true } else { false },
+    )
+    .unwrap();
+
+    let output_vector = format_mat_to_u8_vector_img(&output_mat);
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in canny_edges() is: {:?}", fn_duration);
+
+    format!("{:?}", output_vector)
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -822,7 +851,8 @@ fn main() {
             convolve,
             gaussian_blur,
             median_blur,
-            bilateral_blur
+            bilateral_blur,
+            canny_edges
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

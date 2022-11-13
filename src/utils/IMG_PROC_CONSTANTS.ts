@@ -41,19 +41,21 @@ export const IMG_PROC_PANELS_DATA = {
       LOCAL_HIST: "Lokalny histogram obrazu",
     },
   },
-  FILTER_LINEAR: {
-    TITLE: "Filtracja liniowa",
+  FILTER_BASIC: {
+    TITLE: "Filtracja prosta",
     PANELS: {
       CONVOLUTION: "Konwolucja",
       GAUSSIAN_BLUR: "Rozmycie Gauss'a",
       MEDIAN_BLUR: "Rozmycie medianowe",
-      BILATERAL_BLUR: "Rozmycie birateralne",
     },
   },
-  FILTER_EDGE_DETECTION: {
-    TITLE: "Filtracja wykrywająca krawędzie",
+  FILTER_ADVANCED: {
+    TITLE: "Filtracja złożona",
     PANELS: {
-      EMPTY: "EMPTY",
+      BILATERAL_BLUR: "Rozmycie birateralne",
+      CANNY_EDGES: "Filtr Cann'ego",
+      LAPLACE_EDGES: "Filtr Laplace'a",
+      SOBEL_EDGES: "Filtr Sobel'a",
     },
   },
   MORPH_OPERATIONS: {
@@ -94,6 +96,7 @@ export const IMG_PROC_METHODS = {
   GAUSSIAN_BLUR: "gaussian_blur",
   MEDIAN_BLUR: "median_blur",
   BILATERAL_BLUR: "bilateral_blur",
+  CANNY_EDGES: "canny_edges",
 };
 
 export const THRESHOLD_TYPES = [

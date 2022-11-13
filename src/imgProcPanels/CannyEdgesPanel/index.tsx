@@ -12,29 +12,27 @@ import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
 // TODO : set step for integer numeric input
 
-const BilateralBlurPanel = () => {
+const CannyEdgesPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
-  const [grayscale, toggleGrayscale] = useSwitchInputState(false);
-  const [sigmaSpace, onChangeSigmaSpace] = useFloatInputState(90, 0, 255, 0.01);
-  const [sigmaColor, onChangeSigmaColor] = useFloatInputState(90, 0, 255, 0.01);
-  const [d, onChangeD] = useIntegerInputState(5, 1, 15);
+  const [threshold1, onChangeThreshold1] = useIntegerInputState(100, 0, 255, 1);
+  const [threshold2, onChangeThreshold2] = useIntegerInputState(200, 0, 255, 1);
+  const [L2gradient, toggleL2gradient] = useSwitchInputState(false);
 
   const handleBilateralBlurOperation = useCallback(() => {
     processImage({
-      type: IMG_PROC_METHODS.BILATERAL_BLUR,
+      type: IMG_PROC_METHODS.CANNY_EDGES,
       payload: {
-        grayscale: grayscale.toString(),
-        sigmaSpace: sigmaSpace.toString(),
-        sigmaColor: sigmaColor.toString(),
-        d: d.toString(),
+        threshold1: threshold1.toString(),
+        threshold2: threshold2.toString(),
+        L2gradient: L2gradient.toString(),
       },
     });
-  }, [grayscale, d, sigmaColor, sigmaSpace]);
+  }, [L2gradient, threshold1, threshold2]);
 
   return (
     <StyledSubMethodForm fullWidth>
       <Typography component="h5" fontWeight="bold">
-        {"Wagi parametrów składowych filtru bilateralnego"}
+        {"Wartości progów histerezy dla filtru Cann'ego"}
       </Typography>
       <StyledInputsRowWrapper>
         <TextField
@@ -43,16 +41,16 @@ const BilateralBlurPanel = () => {
           inputMode="decimal"
           InputProps={{
             inputProps: {
-              step: 0.01,
+              step: 1,
               min: 0,
               max: 255,
             },
           }}
-          label="Waga przestrzenna (space)"
+          label="Górny próg histerezy"
           color="secondary"
           sx={{ flex: "1" }}
-          value={sigmaSpace}
-          onChange={onChangeSigmaSpace}
+          value={threshold1}
+          onChange={onChangeThreshold1}
         />
         <TextField
           id="sigmaColor"
@@ -60,52 +58,32 @@ const BilateralBlurPanel = () => {
           inputMode="decimal"
           InputProps={{
             inputProps: {
-              step: 0.01,
+              step: 1,
               min: 0,
               max: 255,
             },
           }}
-          label="Waga jasności (range)"
+          label="Dolny próg histerezy"
           color="secondary"
           sx={{ flex: "1" }}
-          value={sigmaColor}
-          onChange={onChangeSigmaColor}
+          value={threshold2}
+          onChange={onChangeThreshold2}
         />
       </StyledInputsRowWrapper>
-      <Typography component="h5" fontWeight="bold">
-        {"Przekątna otoczenia pojedyńczego piksela (maski)"}
-      </Typography>
-      <TextField
-        id="sigmaColor"
-        type="number"
-        inputMode="decimal"
-        InputProps={{
-          inputProps: {
-            step: 2,
-            min: 1,
-            max: 15,
-          },
-        }}
-        label="Wartość przekątnej (px)"
-        color="secondary"
-        sx={{ flex: "1" }}
-        value={d}
-        onChange={onChangeD}
-      />
       <ToggleSwitch
-        label="Konwertuj na obraz monochromatyczny"
-        checked={grayscale}
-        onChange={toggleGrayscale}
+        label="Kwadratowa normalizacja gradientu obrazu (L2)"
+        checked={L2gradient}
+        onChange={toggleL2gradient}
       />
       <Button
         variant="contained"
         onClick={handleBilateralBlurOperation}
         disabled={isLoading}
       >
-        Wykonaj rozmycie bilateralne
+        Wykonaj filtrację Cann'ego
       </Button>
     </StyledSubMethodForm>
   );
 };
 
-export default BilateralBlurPanel;
+export default CannyEdgesPanel;

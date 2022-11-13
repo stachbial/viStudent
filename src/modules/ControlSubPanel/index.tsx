@@ -10,6 +10,7 @@ import ConvolutionPanel from "../../imgProcPanels/ConvolutionPanel";
 import GaussianBlurPanel from "../../imgProcPanels/GaussianBlurPanel";
 import MedianBlurPanel from "../../imgProcPanels/MedianBlurPanel";
 import BilateralBlurPanel from "../../imgProcPanels/BilateralBlurPanel";
+import CannyEdgesPanel from "../../imgProcPanels/CannyEdgesPanel";
 import { StyledSubPanelContainer } from "./styled";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
@@ -56,28 +57,34 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
           <HistogramPanel maskEnabled />
         </StyledSubPanelContainer>
       );
-    case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.CONVOLUTION:
+    case IMG_PROC_PANELS_DATA.FILTER_BASIC.PANELS.CONVOLUTION:
       return (
         <StyledSubPanelContainer wide>
           <ConvolutionPanel />
         </StyledSubPanelContainer>
       );
-    case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.GAUSSIAN_BLUR:
+    case IMG_PROC_PANELS_DATA.FILTER_BASIC.PANELS.GAUSSIAN_BLUR:
       return (
         <StyledSubPanelContainer>
           <GaussianBlurPanel />
         </StyledSubPanelContainer>
       );
-    case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.MEDIAN_BLUR:
+    case IMG_PROC_PANELS_DATA.FILTER_BASIC.PANELS.MEDIAN_BLUR:
       return (
         <StyledSubPanelContainer>
           <MedianBlurPanel />
         </StyledSubPanelContainer>
       );
-    case IMG_PROC_PANELS_DATA.FILTER_LINEAR.PANELS.BILATERAL_BLUR:
+    case IMG_PROC_PANELS_DATA.FILTER_ADVANCED.PANELS.BILATERAL_BLUR:
       return (
         <StyledSubPanelContainer>
           <BilateralBlurPanel />
+        </StyledSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.FILTER_ADVANCED.PANELS.CANNY_EDGES:
+      return (
+        <StyledSubPanelContainer>
+          <CannyEdgesPanel />
         </StyledSubPanelContainer>
       );
     default:
