@@ -52,10 +52,10 @@ export const IMG_PROC_PANELS_DATA = {
   FILTER_ADVANCED: {
     TITLE: "Filtracja złożona",
     PANELS: {
-      BILATERAL_BLUR: "Rozmycie birateralne",
-      CANNY_EDGES: "Filtr Cann'ego",
-      LAPLACE_EDGES: "Filtr Laplace'a",
+      BILATERAL_BLUR: "Rozmycie biLateralne",
       SOBEL_EDGES: "Filtr Sobel'a",
+      LAPLACE_EDGES: "Filtr Laplace'a",
+      CANNY_EDGES: "Filtr Cann'ego",
     },
   },
   MORPH_OPERATIONS: {
@@ -98,6 +98,7 @@ export const IMG_PROC_METHODS = {
   BILATERAL_BLUR: "bilateral_blur",
   CANNY_EDGES: "canny_edges",
   SOBEL_EDGES: "sobel_edges",
+  LAPLACIAN_EDGES: "laplacian_edges",
 };
 
 export const THRESHOLD_TYPES = [

@@ -843,16 +843,8 @@ fn sobel_edges(img: &str, dx: &str, dy: &str, ksize: &str) -> String {
     let image_vector = deserialize_img_string(img);
     let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE).unwrap();
 
-    //for holding gradient values in CS_16S
-    // let mut grad_x = opencv::core::Mat::default();
-    // let mut grad_y = opencv::core::Mat::default();
-    // //for holding gradient values in CV_8U
-    // let mut grad_x = opencv::core::Mat::default();
-    // let mut grad_y = opencv::core::Mat::default();
-
     let mut output_mat = opencv::core::Mat::default();
 
-    //calculate sobel's gradients for every direction
     opencv::imgproc::sobel(
         &initial_mat,
         &mut output_mat,
@@ -876,6 +868,36 @@ fn sobel_edges(img: &str, dx: &str, dy: &str, ksize: &str) -> String {
     format!("{:?}", output_vector)
 }
 
+#[tauri::command]
+fn laplacian_edges(img: &str, ksize: &str) -> String {
+    let fn_start = std::time::Instant::now();
+
+    let image_vector = deserialize_img_string(img);
+    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE).unwrap();
+
+    let mut output_mat = opencv::core::Mat::default();
+
+    opencv::imgproc::laplacian(
+        &initial_mat,
+        &mut output_mat,
+        CV_8U,
+        ksize.parse::<i32>().unwrap(),
+        1.0,
+        0.0,
+        BORDER_DEFAULT,
+    )
+    .unwrap();
+
+    let output_vector = format_mat_to_u8_vector_img(&output_mat);
+    initial_mat.release().unwrap();
+    output_mat.release().unwrap();
+
+    let fn_duration = fn_start.elapsed();
+    println!("Time elapsed in laplacian() is: {:?}", fn_duration);
+
+    format!("{:?}", output_vector)
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -893,7 +915,8 @@ fn main() {
             median_blur,
             bilateral_blur,
             canny_edges,
-            sobel_edges
+            sobel_edges,
+            laplacian_edges
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
