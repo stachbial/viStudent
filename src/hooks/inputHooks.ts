@@ -8,7 +8,8 @@ export const useIntegerInputState = (
   step?: number
 ): [
   number,
-  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>,
+  (forcedValue: string) => void
 ] => {
   const [inputValue, setInputValue] = useState<number>(initialValue);
 
@@ -30,7 +31,23 @@ export const useIntegerInputState = (
     [inputValue, setInputValue]
   );
 
-  return [inputValue, handleInputChange];
+  const handleForcedInputChange = useCallback(
+    (forcedValue: string) => {
+      setInputValue(
+        validateNumericInputValue(
+          forcedValue,
+          initialValue,
+          min,
+          max,
+          parseInt,
+          step
+        )
+      );
+    },
+    [inputValue, setInputValue]
+  );
+
+  return [inputValue, handleInputChange, handleForcedInputChange];
 };
 export const useFloatInputState = (
   initialValue: number,
@@ -39,7 +56,8 @@ export const useFloatInputState = (
   step?: number
 ): [
   number,
-  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>,
+  (forcedValue: string) => void
 ] => {
   const [inputValue, setInputValue] = useState<number>(initialValue);
 
@@ -61,7 +79,23 @@ export const useFloatInputState = (
     [inputValue, setInputValue]
   );
 
-  return [inputValue, handleInputChange];
+  const handleForcedInputChange = useCallback(
+    (forcedValue: string) => {
+      setInputValue(
+        validateNumericInputValue(
+          forcedValue,
+          initialValue,
+          min,
+          max,
+          parseFloat,
+          step
+        )
+      );
+    },
+    [inputValue, setInputValue]
+  );
+
+  return [inputValue, handleInputChange, handleForcedInputChange];
 };
 
 export const useSwitchInputState = (
