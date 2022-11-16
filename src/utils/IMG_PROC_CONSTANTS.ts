@@ -71,13 +71,13 @@ export const IMG_PROC_PANELS_DATA = {
     PANELS: {
       THRESHOLD_BASIC: "Progowanie proste",
       THRESHOLD_ADAPTIVE: "Progowanie adaptacyjne",
-      DIVISION: "Podział obszaru",
+      DIVISION: "Segmentacja wododziałowa",
     },
   },
   CONTOURS: {
-    TITLE: "Kontury",
+    TITLE: "Wykrywanie konturów",
     PANELS: {
-      EMPTY: "EMPTY",
+      HOUGH_LINES: "Transformata Hough'a",
     },
   },
 };
@@ -99,6 +99,7 @@ export const IMG_PROC_METHODS = {
   CANNY_EDGES: "canny_edges",
   SOBEL_EDGES: "sobel_edges",
   LAPLACIAN_EDGES: "laplacian_edges",
+  HOUGH_LINES_P: "hough_lines_p",
 };
 
 export const THRESHOLD_TYPES = [

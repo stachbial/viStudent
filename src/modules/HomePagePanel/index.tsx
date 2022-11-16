@@ -4,7 +4,6 @@ import { ImageProcessingContext } from "../../store/ImageProcessingContext";
 import { Grid } from "@mui/material";
 import pickFileImage from "../../assets/images/pick-file.jpg";
 import cameraImage from "../../assets/images/use-camera.jpg";
-import Page from "../../components/Page";
 import ImageCardsWrapper from "../../components/ImageCardsWrapper";
 import ImageCard from "../../components/ImageCard";
 import ImageInput from "../../components/ImageInput";
@@ -13,13 +12,13 @@ import WebcamLightbox from "../lightbox/WebcamLightbox";
 import { routes } from "../../routes";
 import { serializeImageData } from "../../utils/dataFormattingHelpers";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
-
+import MotionContainer from "../../components/MotionContainer";
+import { leftCardVariants, rightCardVariants } from "./motion";
 // TODO: rozkminic czy nie sciagnac stany z webview modal i uzywac contextu tylko tu
 
-const HomePageModule = () => {
+const HomePagePanel = () => {
   const router = useRouter();
   const { processImage } = useContext(ImageProcessingContext);
-
   const [showWebcamPreview, setShowWebcamPreview] = useState(false);
   const [chosenImage, setChosenImage] = useState<{
     imageUrl: string;
@@ -51,24 +50,23 @@ const HomePageModule = () => {
   }, [chosenImage, router]);
 
   return (
-    <Page
-      container
-      alignItems="center"
-      justifyContent="center"
-      direction="column"
-    >
+    <>
       <ImageCardsWrapper>
         <Grid item>
-          <ImageInput setImageData={setChosenImage}>
-            <ImageCard src={pickFileImage.src} text="WYBIERZ ZDJĘCIE" />
-          </ImageInput>
+          <MotionContainer variants={leftCardVariants}>
+            <ImageInput setImageData={setChosenImage}>
+              <ImageCard src={pickFileImage.src} text="WYBIERZ ZDJĘCIE" />
+            </ImageInput>
+          </MotionContainer>
         </Grid>
         <Grid item>
-          <ImageCard
-            src={cameraImage.src}
-            text="ZRÓB ZDJĘCIE"
-            onClick={handleOpenWebcamPreview}
-          />
+          <MotionContainer variants={rightCardVariants}>
+            <ImageCard
+              src={cameraImage.src}
+              text="ZRÓB ZDJĘCIE"
+              onClick={handleOpenWebcamPreview}
+            />
+          </MotionContainer>
         </Grid>
       </ImageCardsWrapper>
       <ImageChoiceLightbox
@@ -82,8 +80,8 @@ const HomePageModule = () => {
         open={showWebcamPreview}
         onBackdropClose={handleCloseWebcamPreview}
       />
-    </Page>
+    </>
   );
 };
 
-export default HomePageModule;
+export default HomePagePanel;
