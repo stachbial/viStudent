@@ -16,6 +16,7 @@ export const StyledCreditsWrapper = styled("div")`
   flex-direction: column;
   gap: 5px;
   opacity: 0.5;
+  z-index: -1;
 `;
 
 export const StyledLogoWrapper = styled("div")`
