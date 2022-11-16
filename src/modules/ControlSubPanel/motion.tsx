@@ -9,7 +9,7 @@ const subPanelVariants: Variants = {
     x: -200,
   },
   animate: {
-    opacity: 1,
+    opacity: [0.4, 1],
     x: [-70, 0],
     transition: {
       duration: 1,

@@ -4,7 +4,7 @@ import { display } from "@mui/system";
 export const logoPathVariants: Variants = {
   animate: {
     pathLength: [0, 1],
-    fillOpacity: [0, 0.9, 1],
+    fillOpacity: [0, 0.8, 1, 1],
     transition: {
       duration: 10,
       ease: "easeInOut",

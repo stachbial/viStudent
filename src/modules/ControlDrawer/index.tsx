@@ -105,7 +105,6 @@ const ControlDrawer = ({
           sx={{
             color: theme.palette.grey["700"],
             fontSize: "12px",
-            paddingLeft: "6px",
           }}
         >
           Autor: S. Białecki, Politechnika Gdańska, Projekt Inżynierski ARiSS
