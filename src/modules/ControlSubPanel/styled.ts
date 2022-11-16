@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 export const StyledSubPanelContainer = styled("div", {
   shouldForwardProp: (prop) => prop !== "wide",
 })<{ wide?: boolean }>(({ wide }) => ({
+  height: "100%",
   display: "flex",
   flex: 1,
   flexDirection: "column",

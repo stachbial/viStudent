@@ -11,7 +11,12 @@ import {
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { StyledAccordionWrapper } from "./styled";
+import Logo from "../../components/Logo";
+import {
+  StyledAccordionWrapper,
+  StyledCreditsWrapper,
+  StyledLogoWrapper,
+} from "./styled";
 import { theme } from "../../theme/theme";
 import { IMG_PROC_PANELS_DATA } from "../../utils/IMG_PROC_CONSTANTS";
 
@@ -92,6 +97,14 @@ const ControlDrawer = ({
           );
         })}
       </StyledAccordionWrapper>
+      <StyledCreditsWrapper>
+        <StyledLogoWrapper>
+          <Logo />
+        </StyledLogoWrapper>
+        <Typography sx={{ color: theme.palette.grey["700"], fontSize: "12px" }}>
+          Autor: S. Białecki, Projekt Inżynierski ARiSS 2022
+        </Typography>
+      </StyledCreditsWrapper>
     </Drawer>
   );
 };

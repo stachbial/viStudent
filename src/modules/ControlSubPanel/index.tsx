@@ -1,5 +1,6 @@
 import React from "react";
 import { IMG_PROC_PANELS_DATA } from "../../utils/IMG_PROC_CONSTANTS";
+import { MotionSubPanelContainer } from "./motion";
 import ThresholdAdaptivePanel from "../../imgProcPanels/ThresholdAdaptivePanel";
 import ThresholdBasicPanel from "../../imgProcPanels/ThresholdBasicPanel";
 import MorphDilatePanel from "../../imgProcPanels/MorphDilatePanel";
@@ -13,93 +14,99 @@ import BilateralBlurPanel from "../../imgProcPanels/BilateralBlurPanel";
 import CannyEdgesPanel from "../../imgProcPanels/CannyEdgesPanel";
 import SobelEdgesPanel from "../../imgProcPanels/SobelEdgesPanel";
 import LaplacianPanel from "../../imgProcPanels/LaplacianPanel";
-import { StyledSubPanelContainer } from "./styled";
+import HoughLines from "../../imgProcPanels/HoughLines";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
   switch (displayedSubPanel) {
     case IMG_PROC_PANELS_DATA.SEGMENTATION.PANELS.THRESHOLD_BASIC:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <ThresholdBasicPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.SEGMENTATION.PANELS.THRESHOLD_ADAPTIVE:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <ThresholdAdaptivePanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.ERODE:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <MorphErodePanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.DILATE:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <MorphDilatePanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.ADVANCED:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <MorphAdvancedPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.HISTOGRAMS.PANELS.GLOBAL_HIST:
       return (
-        <StyledSubPanelContainer wide>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel} wide>
           <HistogramPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.HISTOGRAMS.PANELS.LOCAL_HIST:
       return (
-        <StyledSubPanelContainer wide>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel} wide>
           <HistogramPanel maskEnabled />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.FILTER_BASIC.PANELS.CONVOLUTION:
       return (
-        <StyledSubPanelContainer wide>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel} wide>
           <ConvolutionPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.FILTER_BASIC.PANELS.GAUSSIAN_BLUR:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <GaussianBlurPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.FILTER_BASIC.PANELS.MEDIAN_BLUR:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <MedianBlurPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.FILTER_ADVANCED.PANELS.BILATERAL_BLUR:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <BilateralBlurPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.FILTER_ADVANCED.PANELS.CANNY_EDGES:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <CannyEdgesPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.FILTER_ADVANCED.PANELS.SOBEL_EDGES:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <SobelEdgesPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
       );
     case IMG_PROC_PANELS_DATA.FILTER_ADVANCED.PANELS.LAPLACE_EDGES:
       return (
-        <StyledSubPanelContainer>
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <LaplacianPanel />
-        </StyledSubPanelContainer>
+        </MotionSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.CONTOURS.PANELS.HOUGH_LINES:
+      return (
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
+          <HoughLines />
+        </MotionSubPanelContainer>
       );
     default:
       return <div>No such panel found :/</div>;

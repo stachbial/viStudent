@@ -50,7 +50,7 @@ export const StyledEmptyDataMsg = styled("div")`
     width: 100%;
     height: 100%;
     background-color: black;
-    opacity: 0.6;
+    opacity: 0.3;
     z-index: -1;
     border-radius: 10px;
   }
