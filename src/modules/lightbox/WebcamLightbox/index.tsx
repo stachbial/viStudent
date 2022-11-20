@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useContext } from "react";
 import { useRouter } from "next/router";
 import { ImageProcessingContext } from "../../../store/ImageProcessingContext";
+import { useDialogKeyboard } from "../../../hooks/keyboardHooks";
 import { Button, Typography } from "@mui/material";
 import Webcam from "react-webcam";
 import Image from "next/image";
@@ -28,7 +29,7 @@ import {
   StyledExitButtonWrapper,
 } from "../styled";
 
-const WebcamLightbox = ({ open, onBackdropClose }) => {
+const WebcamLightbox = ({ onBackdropClose }) => {
   const router = useRouter();
   const { processImage } = useContext(ImageProcessingContext);
   const [deviceId, setDeviceId] = useState<string | null>(null);
@@ -89,14 +90,16 @@ const WebcamLightbox = ({ open, onBackdropClose }) => {
     router.push(routes.imageProcessingPage);
   };
 
+  // useDialogKeyboard(handleConfirmImage, onBackdropClose);
+
   return !deviceId ? (
     <ChooseCameraDialog
-      open={open && !deviceId}
+      open={!deviceId}
       onClose={handleCloseModal}
       onConfirmDevice={handleConfirmDevice}
     />
   ) : (
-    <StyledModal open={open} onClose={handleCloseModal}>
+    <StyledModal open onClose={handleCloseModal}>
       <>
         <StyledTitle>
           <Typography fontWeight="700">PODGLĄD Z KAMERY</Typography>

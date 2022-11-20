@@ -69,17 +69,17 @@ const HomePagePanel = () => {
           </MotionContainer>
         </Grid>
       </ImageCardsWrapper>
-      <ImageChoiceLightbox
-        open={chosenImage !== null}
-        onBackdropClose={handleCloseImagePreview}
-        src={chosenImage?.imageUrl ? chosenImage.imageUrl : ""}
-        onConfirm={handleConfirmImage}
-        onSetNewImage={setChosenImage}
-      />
-      <WebcamLightbox
-        open={showWebcamPreview}
-        onBackdropClose={handleCloseWebcamPreview}
-      />
+      {chosenImage !== null && (
+        <ImageChoiceLightbox
+          onBackdropClose={handleCloseImagePreview}
+          src={chosenImage.imageUrl}
+          onConfirm={handleConfirmImage}
+          onSetNewImage={setChosenImage}
+        />
+      )}
+      {showWebcamPreview && (
+        <WebcamLightbox onBackdropClose={handleCloseWebcamPreview} />
+      )}
     </>
   );
 };

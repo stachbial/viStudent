@@ -33,7 +33,7 @@ const LaplacianPanel = () => {
           inputProps: {
             step: 2,
             min: 1,
-            max: 7,
+            max: 9,
           },
         }}
         label="Wartość przekątnej (px)"

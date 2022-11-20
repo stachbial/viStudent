@@ -1,3 +1,4 @@
+import { useDialogKeyboard } from "../../../hooks/keyboardHooks";
 import Image from "next/image";
 import { Button, Typography } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -12,14 +13,15 @@ import {
 } from "../styled";
 
 const ImageChoiceLightbox = ({
-  open,
   onBackdropClose,
   src,
   onConfirm,
   onSetNewImage,
 }) => {
+  useDialogKeyboard(onConfirm, onBackdropClose);
+
   return (
-    <StyledModal open={open} onClose={onBackdropClose}>
+    <StyledModal open onClose={onBackdropClose}>
       <>
         <StyledTitle>
           <Typography fontWeight="700">PODGLĄD WYBRANEGO ZDJĘCIA</Typography>
