@@ -7,20 +7,22 @@ use std::ffi::c_uchar;
 
 use opencv::{
     core::{
-        Point2i, Size2i, BORDER_CONSTANT, BORDER_DEFAULT, CV_16S, CV_16U, CV_32S, CV_32SC1,
-        CV_32SC2, CV_64F, CV_64FC1, CV_8S, CV_8U, CV_8UC1, NORM_MINMAX, ROTATE_90_COUNTERCLOCKWISE,
+        Point2i, Scalar_, Size2i, BORDER_CONSTANT, BORDER_DEFAULT, CV_16S, CV_16U, CV_32S,
+        CV_32SC1, CV_32SC2, CV_64F, CV_64FC1, CV_8S, CV_8U, CV_8UC1, CV_PI, NORM_MINMAX,
+        ROTATE_90_COUNTERCLOCKWISE,
     },
     // videoio,
     imgcodecs::{IMREAD_GRAYSCALE, IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT},
     imgproc::{
         morphology_default_border_value, ADAPTIVE_THRESH_GAUSSIAN_C, ADAPTIVE_THRESH_MEAN_C,
-        MORPH_BLACKHAT, MORPH_CLOSE, MORPH_CROSS, MORPH_ELLIPSE, MORPH_GRADIENT, MORPH_OPEN,
-        MORPH_RECT, MORPH_TOPHAT, THRESH_BINARY, THRESH_BINARY_INV, THRESH_OTSU, THRESH_TOZERO,
-        THRESH_TOZERO_INV, THRESH_TRIANGLE, THRESH_TRUNC,
+        COLOR_GRAY2BGR, LINE_AA, MORPH_BLACKHAT, MORPH_CLOSE, MORPH_CROSS, MORPH_ELLIPSE,
+        MORPH_GRADIENT, MORPH_OPEN, MORPH_RECT, MORPH_TOPHAT, THRESH_BINARY, THRESH_BINARY_INV,
+        THRESH_OTSU, THRESH_TOZERO, THRESH_TOZERO_INV, THRESH_TRIANGLE, THRESH_TRUNC,
     },
     // highgui,
     prelude::*,
 };
+use serde::ser::Error;
 
 // fn runopencvexample() -> opencv::Result<()> {
 //     let window = "video capture";
@@ -595,7 +597,6 @@ fn get_hist(
 
     //formatting output
     let output_json = serde_json::Value::Object(map);
-    println!("{:?}", output_json);
 
     initial_mat.release().unwrap();
     buff_mat.release().unwrap();
@@ -898,6 +899,109 @@ fn laplacian_edges(img: &str, ksize: &str) -> String {
     format!("{:?}", output_vector)
 }
 
+// #[tauri::command]
+// fn distance_transf() -> String {
+//     let fn_start = std::time::Instant::now();
+
+//     let image_vector = deserialize_img_string(img);
+//     let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE).unwrap();
+
+//     let mut output_mat = opencv::core::Mat::default();
+
+//     opencv::imgproc::laplacian(
+//         &initial_mat,
+//         &mut output_mat,
+//         CV_8U,
+//         ksize.parse::<i32>().unwrap(),
+//         1.0,
+//         0.0,
+//         BORDER_DEFAULT,
+//     )
+//     .unwrap();
+
+//     let output_vector = format_mat_to_u8_vector_img(&output_mat);
+//     initial_mat.release().unwrap();
+//     output_mat.release().unwrap();
+
+//     let fn_duration = fn_start.elapsed();
+//     println!("Time elapsed in distance_transf() is: {:?}", fn_duration);
+
+//     format!("{:?}", output_vector)
+// }
+
+#[tauri::command]
+fn hough_lines_p(
+    img: &str,
+    rho: &str,
+    theta: &str,
+    threshold: &str,
+    minLineLength: &str,
+    maxLineGap: &str,
+) -> Result<String, String> {
+    fn handle_hough_lines_p(
+        img: &str,
+        rho: &str,
+        theta: &str,
+        threshold: &str,
+        minLineLength: &str,
+        maxLineGap: &str,
+    ) -> Result<String, opencv::Error> {
+        let fn_start = std::time::Instant::now();
+
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED)?;
+
+        let mut output_mat = opencv::core::Mat::default();
+
+        //creating template mat for lines
+        opencv::imgproc::cvt_color(&initial_mat, &mut output_mat, COLOR_GRAY2BGR, 0)?;
+
+        let mut lines_p = opencv::types::VectorOfVec4i::default();
+
+        opencv::imgproc::hough_lines_p(
+            &initial_mat,
+            &mut lines_p,
+            rho.parse::<f64>().unwrap(),
+            CV_PI / 180. * theta.parse::<f64>().unwrap(),
+            threshold.parse::<i32>().unwrap(),
+            minLineLength.parse::<f64>().unwrap(),
+            maxLineGap.parse::<f64>().unwrap(),
+        )?;
+
+        //draw lines
+        for line_p in lines_p {
+            opencv::imgproc::line(
+                &mut output_mat,
+                opencv::core::Point2i::new(line_p[0], line_p[1]),
+                opencv::core::Point2i::new(line_p[2], line_p[3]),
+                opencv::core::Scalar::new(0., 0., 255., 0.),
+                1,
+                LINE_AA,
+                0,
+            )?;
+        }
+
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
+
+        let fn_duration = fn_start.elapsed();
+        println!("Time elapsed hough_lines_p() is: {:?}", fn_duration);
+
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_hough_lines_p(img, rho, theta, threshold, minLineLength, maxLineGap);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("hough_lines_p".into())
+        }
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -916,8 +1020,55 @@ fn main() {
             bilateral_blur,
             canny_edges,
             sobel_edges,
-            laplacian_edges
+            laplacian_edges,
+            hough_lines_p
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
+// let mut lines = opencv::types::VectorOfVec2f::new();
+// opencv::imgproc::hough_lines(
+//     &buff_mat,
+//     &mut lines,
+//     1.,
+//     CV_PI / 180.,
+//     100,
+//     0.,
+//     0.,
+//     0.,
+//     2. * CV_PI,
+// )
+// .unwrap();
+
+// for line in lines {
+//     // let q = lines.into_iter();
+
+//     let rho = line[0];
+//     let theta = line[1];
+
+//     let mut a = theta.cos();
+//     let mut b = theta.sin();
+
+//     let mut p1 = Point2i::default();
+//     let mut p2 = Point2i::default();
+
+//     let mut x0 = a * rho;
+//     let mut y0 = b * rho;
+
+//     p1.x = (x0 + 1000. * (-b)).round() as i32;
+//     p1.y = (y0 + 1000. * (a)).round() as i32;
+//     p2.x = (x0 - 1000. * (-b)).round() as i32;
+//     p2.y = (y0 - 1000. * (a)).round() as i32;
+
+//     opencv::imgproc::line(
+//         &mut output_mat,
+//         p1,
+//         p2,
+//         opencv::core::Scalar::new(0., 0., 255., 0.),
+//         1,
+//         LINE_AA,
+//         0,
+//     )
+//     .unwrap();
+// }

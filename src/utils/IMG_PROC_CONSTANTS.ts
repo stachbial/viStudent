@@ -75,9 +75,10 @@ export const IMG_PROC_PANELS_DATA = {
     },
   },
   CONTOURS: {
-    TITLE: "Wykrywanie konturów",
+    TITLE: "Wykrywanie konturów - Transformata Hough'a",
     PANELS: {
-      HOUGH_LINES: "Transformata Hough'a",
+      HOUGH_LINES: "Wykrywanie linii",
+      HOUGH_CIRCLES: "Wykrywanie okręgów",
     },
   },
 };

@@ -22,6 +22,7 @@ import { StyledSubMethodForm, StyledInputsWrapper } from "./styled";
 
 // TODO: find out value ranges for blockSize and c
 // TODO: implement input debouncing
+// TODO: secure input
 
 const ThresholdAdaptivePanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
