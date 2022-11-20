@@ -3,6 +3,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import { ImageProcessingContextProvider } from "../store/ImageProcessingContextProvider";
 import { theme } from "../theme/theme";
 import AppContainer from "../components/AppContainer";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "../theme/style.css";
 import "@fontsource/roboto/300.css";
@@ -17,6 +19,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <ImageProcessingContextProvider>
         <AppContainer>
           <Component {...pageProps} />
+          <ToastContainer />
         </AppContainer>
       </ImageProcessingContextProvider>
     </ThemeProvider>

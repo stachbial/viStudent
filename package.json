@@ -19,6 +19,7 @@
     "next": "^12.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-toastify": "^9.1.1",
     "react-webcam": "^7.0.1",
     "recharts": "^2.1.16",
     "styled-components": "^5.3.6"

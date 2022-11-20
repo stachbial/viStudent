@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ImageProcessingContext } from "./ImageProcessingContext";
 import { dispatchRustImageOperation } from "../utils/dispatchRustImageOperation";
 import { IMG_PROC_METHODS } from "../utils/IMG_PROC_CONSTANTS";
+import { toast } from "react-toastify";
 import {
   serializeImageData,
   deserializeRustImageResponse,
@@ -79,8 +80,9 @@ export const ImageProcessingContextProvider = ({ children }) => {
             currentImageActionParams
           );
 
-          const { uint8imageData, imageUrl } =
-            deserializeRustImageResponse(rustImageData);
+          const { uint8imageData, imageUrl } = deserializeRustImageResponse(
+            rustImageData as string
+          );
 
           setProcessedImageData((prev) => {
             // not pushing currentImageData if "null" (initial state)  to image history
@@ -95,10 +97,21 @@ export const ImageProcessingContextProvider = ({ children }) => {
               previousImageStatesData: newPreviousImageStatesData,
             };
           });
-        } catch {
-          (error: any) => {
-            console.error(`error while handling rust img operation: `, error);
-          };
+        } catch (e) {
+          console.error(`error while handling rust img operation: `);
+          toast.error(e, {
+            position: "top-right",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setEditingState((prev) => {
+            return { ...prev, isLoading: false };
+          });
         }
       };
 
