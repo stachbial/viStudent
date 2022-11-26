@@ -8,6 +8,11 @@ export const SUPPORTED_IMG_EXTENSIONS = [
   "webp",
 ];
 
+export const SUPPORTED_IMG_DIMENSIONS = {
+  width: 1000,
+  height: 1000,
+};
+
 export const IMG_PROC_PANELS_DATA = {
   HISTOGRAMS: {
     TITLE: "Histogramy",

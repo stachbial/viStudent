@@ -1,10 +1,14 @@
 import { ChangeEvent, useRef, useState, useCallback } from "react";
 import { Button } from "@mui/material";
 import LoopIcon from "@mui/icons-material/Loop";
-import { getImageDataFromBuffer } from "../../utils/dataFormattingHelpers";
-import { validateImageInput } from "../../utils/inputValidation";
 import SupportedFormatsDialog from "../dialogs/SupportedFormatsDialog";
-
+import SupportedDimensionsDialog from "../dialogs/SupportedDimensionsDialog";
+import { getImageDataFromBuffer } from "../../utils/dataFormattingHelpers";
+import { SUPPORTED_IMG_DIMENSIONS } from "../../utils/IMG_PROC_CONSTANTS";
+import {
+  validateImageFormat,
+  validateImageDimensions,
+} from "../../utils/inputValidation";
 // TODO: adjust next/image formats to opencv formats!! !!!
 
 const ImageInput = ({
@@ -24,12 +28,28 @@ const ImageInput = ({
     imageData: Uint8Array;
   }) => void;
 }) => {
-  const [showDialog, setShowDialog] = useState(false);
+  const [showFormatsDialog, setShowFormatsDialog] = useState(false);
+  const [showDimensionsDialog, setShowDimensionsDialog] = useState(false);
   const inputRef = useRef(null);
 
   const onCloseDialog = useCallback(() => {
-    setShowDialog(false);
-  }, [setShowDialog]);
+    setShowFormatsDialog(false);
+    setShowDimensionsDialog(false);
+  }, [setShowFormatsDialog]);
+
+  const handleValidImage = useCallback(
+    (imageUrl: string, imageData: Uint8Array) => () => {
+      setImageData({
+        imageUrl,
+        imageData,
+      });
+    },
+    [setImageData]
+  );
+
+  const handleInValidDimensions = useCallback(() => {
+    setShowDimensionsDialog(true);
+  }, [setShowDimensionsDialog]);
 
   const onChangeHandler = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +57,7 @@ const ImageInput = ({
       event.preventDefault();
 
       if (event.target.files && event.target.files[0]) {
-        if (validateImageInput(event.target.files[0].type)) {
+        if (validateImageFormat(event.target.files[0].type)) {
           const reader = new FileReader();
           reader.readAsArrayBuffer(event.target.files[0]);
 
@@ -45,15 +65,20 @@ const ImageInput = ({
             const { imageUrl, uint8imageData } = getImageDataFromBuffer(
               e.target.result as ArrayBuffer
             );
-            setImageData({ imageUrl: imageUrl, imageData: uint8imageData });
+
+            validateImageDimensions(
+              imageUrl,
+              handleValidImage(imageUrl, uint8imageData),
+              handleInValidDimensions
+            );
           };
         } else {
-          setShowDialog(true);
+          setShowFormatsDialog(true);
         }
         if (inputRef.current?.value) inputRef.current.value = "";
       }
     },
-    [setImageData, setShowDialog]
+    [setImageData, setShowFormatsDialog]
   );
 
   return (
@@ -81,7 +106,14 @@ const ImageInput = ({
           />
         </label>
       )}
-      <SupportedFormatsDialog open={showDialog} onClose={onCloseDialog} />
+      <SupportedFormatsDialog
+        open={showFormatsDialog}
+        onClose={onCloseDialog}
+      />
+      <SupportedDimensionsDialog
+        open={showDimensionsDialog}
+        onClose={onCloseDialog}
+      />
     </>
   );
 };

@@ -1,6 +1,9 @@
-import { SUPPORTED_IMG_EXTENSIONS } from "./IMG_PROC_CONSTANTS";
+import {
+  SUPPORTED_IMG_EXTENSIONS,
+  SUPPORTED_IMG_DIMENSIONS,
+} from "./IMG_PROC_CONSTANTS";
 
-export const validateImageInput = (fileType: string) => {
+export const validateImageFormat = (fileType: string) => {
   const fileExtension = fileType.split("/");
   if (
     SUPPORTED_IMG_EXTENSIONS.includes(fileExtension[fileExtension.length - 1])
@@ -8,6 +11,25 @@ export const validateImageInput = (fileType: string) => {
     return true;
 
   return false;
+};
+
+export const validateImageDimensions = (
+  imageUrl: string,
+  onValid: () => void,
+  onInValid: () => void
+) => {
+  const image = new Image();
+  image.src = imageUrl;
+  image.onload = () => {
+    if (
+      image.width <= SUPPORTED_IMG_DIMENSIONS.width &&
+      image.height <= SUPPORTED_IMG_DIMENSIONS.height
+    ) {
+      onValid();
+    } else {
+      onInValid();
+    }
+  };
 };
 
 export const validateNumericInputValue = (
