@@ -9,8 +9,8 @@ export const SUPPORTED_IMG_EXTENSIONS = [
 ];
 
 export const SUPPORTED_IMG_DIMENSIONS = {
-  width: 1000,
-  height: 1000,
+  width: 1500,
+  height: 1500,
 };
 
 export const IMG_PROC_PANELS_DATA = {
