@@ -1,28 +1,3 @@
-//does not come along with next/image files!!
-// export const supportedImageExtensions = [
-//   "bmp",
-//   "dib",x?
-//   "jpeg",
-//   "jpeg",
-//   "jpg",
-//   "jpe",
-//   "jp2",x
-//   "png",
-//   "webp",
-//   "pbm",x
-//   "pgm",x
-//   "ppm",x
-//   "pxm",
-//   "pnm",
-//   "sr",
-//   "ras",
-//   "tiff",??????
-//   "tif",???
-//   "hdr",x
-//   "pic",x
-//   "apng". x
-// ];
-
 export const SUPPORTED_IMG_EXTENSIONS = [
   "jpeg",
   "gif",
@@ -71,14 +46,13 @@ export const IMG_PROC_PANELS_DATA = {
     PANELS: {
       THRESHOLD_BASIC: "Progowanie proste",
       THRESHOLD_ADAPTIVE: "Progowanie adaptacyjne",
-      DIVISION: "Segmentacja wododziałowa",
+      DISTANCE_TRANSFORM: "Transformata dystansowa",
     },
   },
   CONTOURS: {
     TITLE: "Wykrywanie konturów - Transformata Hough'a",
     PANELS: {
-      HOUGH_LINES: "Wykrywanie linii",
-      HOUGH_CIRCLES: "Wykrywanie okręgów",
+      HOUGH_LINES: "Wykrywanie linii prostych",
     },
   },
 };
@@ -101,6 +75,7 @@ export const IMG_PROC_METHODS = {
   SOBEL_EDGES: "sobel_edges",
   LAPLACIAN_EDGES: "laplacian_edges",
   HOUGH_LINES_P: "hough_lines_p",
+  DISTANCE_TRANSFORM: "dist_transf",
 };
 
 export const THRESHOLD_TYPES = [
@@ -130,4 +105,26 @@ export const MORPH_ADVANCED_OP_TYPES = [
   { name: "Gradient morfologiczny", value: "MORPH_GRADIENT" },
   { name: "Top Hat", value: "MORPH_TOPHAT" },
   { name: "Black Hat", value: "MORPH_BLACKHAT" },
+];
+
+export const DISTANCE_TYPES = [
+  { name: "L1: |x1-x2| + |y1-y2|", value: "DIST_L1" },
+  { name: "L2: dystans euklidesowy", value: "DIST_L2" },
+  { name: "C: max(|x1-x2|,|y1-y2|", value: "DIST_C" },
+  { name: "L12: 2(sqrt(1+x*x/2) - 1))", value: "DIST_L12" },
+  { name: "FAIR:  c^2(|x|/c-log(1+|x|/c)), c = 1.3998", value: "DIST_FAIR" },
+  {
+    name: "Metoda Welsch'a: c^2/2(1-exp(-(x/c)^2)), c = 2.9846",
+    value: "DIST_WELSCH",
+  },
+  {
+    name: "Metoda Hubera'a: |x|<c ? x^2/2 : c(|x|-c/2), c=1.345",
+    value: "DIST_HUBER",
+  },
+];
+
+export const DIST_MASK_TYPES = [
+  { name: "3 x 3", value: "DIST_MASK_3" },
+  { name: "5 x 5", value: "DIST_MASK_5" },
+  { name: "Dynamiczna maska precyzyjna", value: "DIST_MASK_PRECISE" },
 ];
