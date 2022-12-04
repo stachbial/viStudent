@@ -72,7 +72,16 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
       res.replace("Object ", "").replaceAll("String(", "").replaceAll(")", "")
     );
     setHistogramJsonData(json_res);
-  }, [histogramJsonData, maskH, maskW, maskX, maskY, grayscale, normalize]);
+  }, [
+    histogramJsonData,
+    maskH,
+    maskW,
+    maskX,
+    maskY,
+    grayscale,
+    normalize,
+    currentImageData,
+  ]);
 
   return (
     <>
@@ -162,7 +171,7 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
         <Button
           variant="contained"
           onClick={handleHistOperation}
-          disabled={isLoading}
+          disabled={isLoading || currentImageData === null}
         >
           Wyznacz histogram
         </Button>
