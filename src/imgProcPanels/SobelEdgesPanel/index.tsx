@@ -52,7 +52,7 @@ const SobelEdgesPanel = () => {
               max: 7,
             },
           }}
-          label="Rząd pochodnej w osi X (dx)"
+          label="Rząd pochodnej w osi X"
           color="secondary"
           sx={{ flex: "1" }}
           value={dx}
@@ -69,7 +69,7 @@ const SobelEdgesPanel = () => {
               max: 7,
             },
           }}
-          label="Rząd pochodnej w osi Y (dy)"
+          label="Rząd pochodnej w osi Y"
           color="secondary"
           sx={{ flex: "1" }}
           value={dy}

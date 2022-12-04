@@ -15,6 +15,7 @@ import CannyEdgesPanel from "../../imgProcPanels/CannyEdgesPanel";
 import SobelEdgesPanel from "../../imgProcPanels/SobelEdgesPanel";
 import LaplacianPanel from "../../imgProcPanels/LaplacianPanel";
 import HoughLines from "../../imgProcPanels/HoughLines";
+import DistanceTransfPanel from "../../imgProcPanels/DistanceTransfPanel";
 
 const ControlSubPanel = ({ displayedSubPanel }) => {
   switch (displayedSubPanel) {
@@ -106,6 +107,12 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
       return (
         <MotionSubPanelContainer presenceKey={displayedSubPanel}>
           <HoughLines />
+        </MotionSubPanelContainer>
+      );
+    case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.DISTANCE_TRANSFORM:
+      return (
+        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
+          <DistanceTransfPanel />
         </MotionSubPanelContainer>
       );
     default:

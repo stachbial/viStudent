@@ -10,8 +10,6 @@ const ConvolutionPanel = () => {
   const [kernelValues, setKernelValues] = useState<number[][]>();
 
   const handleConvolveOperation = useCallback(() => {
-    // console.log(kernelValues[0].toString());
-    // console.log(serializeKernelValues(kernelValues));
     processImage({
       type: IMG_PROC_METHODS.CONVOLVE,
       payload: { kernel: serializeKernelValues(kernelValues) },

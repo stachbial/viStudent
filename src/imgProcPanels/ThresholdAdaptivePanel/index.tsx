@@ -2,6 +2,10 @@ import React, { useState, useCallback, useContext, useEffect } from "react";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 import {
+  useIntegerInputState,
+  useSelectInputState,
+} from "../../hooks/inputHooks";
+import {
   TRESHOLD_TYP,
   TRESHOLD_ADPT_PARAMS,
   THRESHOLD_ADPT_METHOD_TYP,
@@ -26,112 +30,28 @@ import { StyledSubMethodForm, StyledInputsWrapper } from "./styled";
 
 const ThresholdAdaptivePanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [threshParams, setThreshParams] = useState<TRESHOLD_ADPT_PARAMS>({
-    grayscale: true,
-    threshTyp: null,
-    adaptiveMethod: null,
-    maxval: null,
-    blockSize: null,
-    c: null,
-  });
-
-  const handleOnChangeMaxval = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setThreshParams((prev) => {
-        return {
-          ...prev,
-          maxval: parseFloat(event.target.value).toString(),
-        };
-      });
-    },
-    [setThreshParams, threshParams]
+  const [maxval, onChangeMaxval] = useIntegerInputState(255, 0, 255);
+  const [blockSize, onChangeBlockSize] = useIntegerInputState(3, 1, 11);
+  const [c, onChangeC] = useIntegerInputState(11, 0, 255);
+  const [threshTyp, onChangeThreshTyp] = useSelectInputState(
+    THRESHOLD_TYPES[0].value
   );
-
-  const handleOnChangeBlockSize = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setThreshParams((prev) => {
-        return {
-          ...prev,
-          blockSize: parseInt(event.target.value).toString(),
-        };
-      });
-    },
-    [setThreshParams, threshParams]
-  );
-
-  const handleOnChangeC = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setThreshParams((prev) => {
-        return {
-          ...prev,
-          c: parseFloat(event.target.value).toString(),
-        };
-      });
-    },
-    [setThreshParams, threshParams]
-  );
-
-  const handleOnChangeGrayScale = useCallback(() => {
-    setThreshParams((prev) => {
-      return { ...prev, grayscale: !prev.grayscale };
-    });
-  }, [setThreshParams, threshParams]);
-
-  const handleOnChangeThreshType = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setThreshParams((prev) => {
-        return {
-          ...prev,
-          threshTyp: event.target.value as TRESHOLD_TYP,
-        };
-      });
-    },
-    [setThreshParams, threshParams]
-  );
-
-  const handleOnChangeMethodType = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setThreshParams((prev) => {
-        return {
-          ...prev,
-          adaptiveMethod: event.target.value as THRESHOLD_ADPT_METHOD_TYP,
-        };
-      });
-    },
-    [setThreshParams, threshParams]
+  const [adaptiveMethod, onChangeAdaptiveMethod] = useSelectInputState(
+    THRESHOLD_ADPT_METHODS_TYPES[0].value
   );
 
   const handleThresholdOperation = useCallback(() => {
     processImage({
       type: IMG_PROC_METHODS.ADAPTIVE_THRESHOLD,
       payload: {
-        ...threshParams,
-        grayscale: threshParams.grayscale.toString(),
+        maxval: maxval.toString(),
+        blockSize: blockSize.toString(),
+        c: c.toString(),
+        threshTyp: threshTyp.toString(),
+        adaptiveMethod: adaptiveMethod.toString(),
       },
     });
-  }, [processImage, threshParams]);
-
-  useEffect(() => {
-    if (
-      threshParams.maxval &&
-      threshParams.adaptiveMethod &&
-      threshParams.threshTyp &&
-      threshParams.blockSize &&
-      threshParams.c
-    )
-      setIsFormValid(true);
-  }, [threshParams]);
+  }, [maxval, blockSize, c, threshTyp, adaptiveMethod]);
 
   return (
     <StyledSubMethodForm fullWidth>
@@ -140,9 +60,9 @@ const ThresholdAdaptivePanel = () => {
       </Typography>
       <StyledInputsWrapper>
         <TextField
-          value={threshParams.threshTyp ? threshParams.threshTyp : ""}
+          value={threshTyp}
           label="Typ progowania"
-          onChange={handleOnChangeThreshType}
+          onChange={onChangeThreshTyp}
           color="secondary"
           sx={{ flex: "1" }}
           select
@@ -150,52 +70,50 @@ const ThresholdAdaptivePanel = () => {
           {THRESHOLD_TYPES.filter((type) => type.value.includes("BINARY")).map(
             (threshType) => {
               return (
-                <MenuItem
-                  value={threshType.value}
-                >{`${threshType.name} (${threshType.value})`}</MenuItem>
+                <MenuItem value={threshType.value}>{threshType.name}</MenuItem>
               );
             }
           )}
         </TextField>
         <TextField
-          value={threshParams.adaptiveMethod ? threshParams.adaptiveMethod : ""}
+          value={adaptiveMethod}
           label="Metoda adaptacyjna"
-          onChange={handleOnChangeMethodType}
+          onChange={onChangeAdaptiveMethod}
           color="secondary"
           sx={{ flex: "1" }}
           select
         >
-          {THRESHOLD_ADPT_METHODS_TYPES.map((threshType) => {
+          {THRESHOLD_ADPT_METHODS_TYPES.map((adaptiveMethodType) => {
             return (
-              <MenuItem
-                value={threshType.value}
-              >{`${threshType.name} (${threshType.value})`}</MenuItem>
+              <MenuItem value={adaptiveMethodType.value}>
+                {adaptiveMethodType.name}
+              </MenuItem>
             );
           })}
         </TextField>
       </StyledInputsWrapper>
+      <TextField
+        id="Thresh"
+        type="number"
+        inputMode="decimal"
+        InputProps={{ inputProps: { max: 11, step: 2, min: 1 } }}
+        label="Szerokość przekątnej otoczenia (px)"
+        color="secondary"
+        sx={{ flex: "1" }}
+        value={blockSize}
+        onChange={onChangeBlockSize}
+      />
       <StyledInputsWrapper>
         <TextField
           id="Thresh"
           type="number"
           inputMode="decimal"
-          InputProps={{ inputProps: { max: 255, step: 0.01, min: 0 } }}
-          label="Próg (max: 255)"
+          InputProps={{ inputProps: { max: 255, step: 1, min: 0 } }}
+          label="Wartość maksymalna"
           color="secondary"
           sx={{ flex: "1" }}
-          value={threshParams.maxval ? threshParams.maxval : ""}
-          onChange={handleOnChangeMaxval}
-        />
-        <TextField
-          id="Thresh"
-          type="number"
-          inputMode="decimal"
-          InputProps={{ inputProps: { max: 255, step: 2, min: 3 } }}
-          label="Otoczenie pixeli"
-          color="secondary"
-          sx={{ flex: "1" }}
-          value={threshParams.blockSize ? threshParams.blockSize : ""}
-          onChange={handleOnChangeBlockSize}
+          value={maxval}
+          onChange={onChangeMaxval}
         />
         <TextField
           id="Thresh"
@@ -204,34 +122,22 @@ const ThresholdAdaptivePanel = () => {
           InputProps={{
             inputProps: {
               max: 255,
-              step: 0.01,
+              step: 1,
               min: 0,
             },
           }}
           label="Próg globalny C"
           color="secondary"
           sx={{ flex: "1" }}
-          value={threshParams.c ? threshParams.c : ""}
-          onChange={handleOnChangeC}
+          value={c}
+          onChange={onChangeC}
         />
       </StyledInputsWrapper>
-      <FormControlLabel
-        sx={{ margin: 0, justifyContent: "space-between" }}
-        label="Konwertuj na obraz monochromatyczny (zalecane)"
-        labelPlacement="start"
-        defaultChecked
-        control={
-          <Switch
-            checked={threshParams.grayscale}
-            onChange={handleOnChangeGrayScale}
-            color="secondary"
-          />
-        }
-      />
+
       <Button
         variant="contained"
         onClick={handleThresholdOperation}
-        disabled={!isFormValid || isLoading}
+        disabled={isLoading}
       >
         Wykonaj progowanie adaptacyjne
       </Button>

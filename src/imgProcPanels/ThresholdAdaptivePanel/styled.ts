@@ -4,7 +4,7 @@ import { FormControl } from "@mui/material";
 export const StyledSubMethodForm = styled(FormControl)`
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 `;
 
 export const StyledSelectWrapper = styled("div")`

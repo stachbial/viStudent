@@ -25,25 +25,26 @@ export const IMG_PROC_PANELS_DATA = {
     TITLE: "Filtracja prosta",
     PANELS: {
       CONVOLUTION: "Konwolucja",
-      GAUSSIAN_BLUR: "Rozmycie Gauss'a",
+      GAUSSIAN_BLUR: "Rozmycie Gaussa",
       MEDIAN_BLUR: "Rozmycie medianowe",
     },
   },
   FILTER_ADVANCED: {
     TITLE: "Filtracja złożona",
     PANELS: {
-      BILATERAL_BLUR: "Rozmycie biLateralne",
+      BILATERAL_BLUR: "Rozmycie Bilateralne",
       SOBEL_EDGES: "Filtr Sobel'a",
       LAPLACE_EDGES: "Filtr Laplace'a",
-      CANNY_EDGES: "Filtr Cann'ego",
+      CANNY_EDGES: "Filtr Canny'ego",
     },
   },
   MORPH_OPERATIONS: {
     TITLE: "Operacje morfologiczne",
     PANELS: {
-      ERODE: "Erozja",
       DILATE: "Dylatacja",
+      ERODE: "Erozja",
       ADVANCED: "Warianty zaawansowane",
+      // DISTANCE_TRANSFORM: "Transformata dystansowa",
     },
   },
   SEGMENTATION: {
@@ -51,7 +52,6 @@ export const IMG_PROC_PANELS_DATA = {
     PANELS: {
       THRESHOLD_BASIC: "Progowanie proste",
       THRESHOLD_ADAPTIVE: "Progowanie adaptacyjne",
-      DISTANCE_TRANSFORM: "Transformata dystansowa",
     },
   },
   CONTOURS: {
@@ -89,8 +89,6 @@ export const THRESHOLD_TYPES = [
   { name: "Okrawające", value: "THRESH_TRUNC" },
   { name: "Do zera", value: "THRESH_TOZERO" },
   { name: "Do zera odwrotne", value: "THRESH_TOZERO_INV" },
-  { name: "", value: "THRESH_OTSU" },
-  { name: "", value: "THRESH_TRIANGLE" },
 ];
 
 export const THRESHOLD_ADPT_METHODS_TYPES = [
@@ -101,15 +99,15 @@ export const THRESHOLD_ADPT_METHODS_TYPES = [
 export const MORPH_SHAPES = [
   { name: "Prostokąt", value: "MORPH_RECT" },
   { name: "Krzyż", value: "MORPH_CROSS" },
-  { name: "Elipsa", value: "MORPH_ELLIPSE" },
+  { name: "Elipsa", value: "MORPH_ELIPSE" },
 ];
 
 export const MORPH_ADVANCED_OP_TYPES = [
   { name: "Otwarcie", value: "MORPH_OPEN" },
   { name: "Zamknięcie", value: "MORPH_CLOSE" },
   { name: "Gradient morfologiczny", value: "MORPH_GRADIENT" },
-  { name: "Top Hat", value: "MORPH_TOPHAT" },
-  { name: "Black Hat", value: "MORPH_BLACKHAT" },
+  { name: 'Detekcja maksimum lokalnego "Top Hat"', value: "MORPH_TOPHAT" },
+  { name: 'Detekcja minimum lokalnego "Black Hat"', value: "MORPH_BLACKHAT" },
 ];
 
 export const DISTANCE_TYPES = [
@@ -132,4 +130,10 @@ export const DIST_MASK_TYPES = [
   { name: "3 x 3", value: "DIST_MASK_3" },
   { name: "5 x 5", value: "DIST_MASK_5" },
   { name: "Dynamiczna maska precyzyjna", value: "DIST_MASK_PRECISE" },
+];
+
+export const LINE_COLORS = [
+  { name: "czerwony", value: "red" },
+  { name: "niebieski", value: "blue" },
+  { name: "zielony", value: "green" },
 ];

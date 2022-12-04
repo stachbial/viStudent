@@ -29,7 +29,7 @@ const MedianBlurPanel = () => {
   return (
     <StyledSubMethodForm fullWidth>
       <Typography component="h5" fontWeight="bold">
-        {"Wielkość zakresu pikseli będących dziedziną mediany "}
+        {"Szerokość przekątnej otoczenia piksela (maski)"}
       </Typography>
       <TextField
         id="kernelW"
@@ -42,7 +42,7 @@ const MedianBlurPanel = () => {
             max: 11,
           },
         }}
-        label="Wartość zakresu (px)"
+        label="Wartość przekątnej (px)"
         color="secondary"
         sx={{ flex: "1" }}
         value={aperture}

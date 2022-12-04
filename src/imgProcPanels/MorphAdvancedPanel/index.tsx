@@ -1,116 +1,43 @@
-import React, { useState, useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext } from "react";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
 import {
   IMG_PROC_METHODS,
   MORPH_SHAPES,
   MORPH_ADVANCED_OP_TYPES,
 } from "../../utils/IMG_PROC_CONSTANTS";
-import {
-  MORPH_ADVANCED_TYPE,
-  MORPH_SHAPE_TYPE,
-  MORPH_ADVANCED_PARAMS,
-} from "../../types/imgProcParamsTypes";
 import { Typography, TextField, Button, MenuItem } from "@mui/material";
 import OperationSwitch from "../../components/ToggleSwitch";
 import { StyledSubMethodForm, StyledNumberInputsWrapper } from "./styled";
-
-// TODO: checkout morphSize and secure it's input
+import {
+  useIntegerInputState,
+  useSelectInputState,
+  useSwitchInputState,
+} from "../../hooks/inputHooks";
 
 const MorphAdvancedPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [morphAdvancedParams, setMorphAdvancedParams] =
-    useState<MORPH_ADVANCED_PARAMS>({
-      grayscale: false,
-      morphShape: null,
-      morphSize: null,
-      iterations: "1",
-      morphType: null,
-    });
-
-  const handleOnChangeMorphSize = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setMorphAdvancedParams((prev) => {
-        return {
-          ...prev,
-          morphSize: parseInt(event.target.value).toString(),
-        };
-      });
-    },
-    [setMorphAdvancedParams, morphAdvancedParams]
+  const [grayscale, onChangeGrayscale] = useSwitchInputState(true);
+  const [iterations, onChangeIterations] = useIntegerInputState(1, 1, 7);
+  const [morphSize, onChangeMorphSize] = useIntegerInputState(3, 1, 11);
+  const [morphShape, onChangeMorphShape] = useSelectInputState(
+    MORPH_SHAPES[0].value
+  );
+  const [morphType, onChangeMorphType] = useSelectInputState(
+    MORPH_ADVANCED_OP_TYPES[0].value
   );
 
-  const handleOnChangeIterations = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setMorphAdvancedParams((prev) => {
-        return {
-          ...prev,
-          iterations: parseInt(event.target.value).toString(),
-        };
-      });
-    },
-    [setMorphAdvancedParams]
-  );
-
-  const handleOnChangeGrayScale = useCallback(() => {
-    event.stopPropagation();
-
-    setMorphAdvancedParams((prev) => {
-      return { ...prev, grayscale: !prev.grayscale };
-    });
-  }, [setMorphAdvancedParams, morphAdvancedParams]);
-
-  const handleOnChangeMorphShape = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setMorphAdvancedParams((prev) => {
-        return {
-          ...prev,
-          morphShape: event.target.value as MORPH_SHAPE_TYPE,
-        };
-      });
-    },
-    [setMorphAdvancedParams, morphAdvancedParams]
-  );
-
-  const handleOnChangeMorphType = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setMorphAdvancedParams((prev) => {
-        return {
-          ...prev,
-          morphType: event.target.value as MORPH_ADVANCED_TYPE,
-        };
-      });
-    },
-    [setMorphAdvancedParams, morphAdvancedParams]
-  );
-
-  const handleOperation = useCallback(() => {
+  const handleAdvancedMorphOperation = useCallback(() => {
     processImage({
       type: IMG_PROC_METHODS.MORPH_ADVANCED,
       payload: {
-        ...morphAdvancedParams,
-        grayscale: morphAdvancedParams.grayscale.toString(),
+        grayscale: grayscale.toString(),
+        iterations: iterations.toString(),
+        morphSize: morphSize.toString(),
+        morphShape: morphShape.toString(),
+        morphType: morphType.toString(),
       },
     });
-  }, [morphAdvancedParams]);
-
-  useEffect(() => {
-    if (
-      morphAdvancedParams.morphType &&
-      morphAdvancedParams.morphShape &&
-      morphAdvancedParams.morphSize &&
-      morphAdvancedParams.iterations
-    )
-      setIsFormValid(true);
-  }, [morphAdvancedParams]);
+  }, [grayscale, iterations, morphSize, morphShape, morphType]);
 
   return (
     <StyledSubMethodForm fullWidth>
@@ -118,36 +45,26 @@ const MorphAdvancedPanel = () => {
         {"Parametry zaawansowanej operacji morfologicznej"}
       </Typography>
       <TextField
-        value={
-          morphAdvancedParams.morphType ? morphAdvancedParams.morphType : ""
-        }
+        value={morphType}
         label="Typ operacji zaawansowanej"
-        onChange={handleOnChangeMorphType}
+        onChange={onChangeMorphType}
         color="secondary"
         select
       >
         {MORPH_ADVANCED_OP_TYPES.map((morphType) => {
-          return (
-            <MenuItem
-              value={morphType.value}
-            >{`${morphType.name} (${morphType.value})`}</MenuItem>
-          );
+          return <MenuItem value={morphType.value}>{morphType.name}</MenuItem>;
         })}
       </TextField>
       <TextField
-        value={
-          morphAdvancedParams.morphShape ? morphAdvancedParams.morphShape : ""
-        }
+        value={morphShape}
         label="Element strukturalny"
-        onChange={handleOnChangeMorphShape}
+        onChange={onChangeMorphShape}
         color="secondary"
         select
       >
         {MORPH_SHAPES.map((morphShape) => {
           return (
-            <MenuItem
-              value={morphShape.value}
-            >{`${morphShape.name} (${morphShape.value})`}</MenuItem>
+            <MenuItem value={morphShape.value}>{morphShape.name}</MenuItem>
           );
         })}
       </TextField>
@@ -156,14 +73,12 @@ const MorphAdvancedPanel = () => {
           id="Thresh"
           type="number"
           inputMode="decimal"
-          InputProps={{ inputProps: { step: 2, min: 1 } }}
+          InputProps={{ inputProps: { step: 2, min: 1, max: 11 } }}
           label="Wielkość el. strukturalnego"
           color="secondary"
           sx={{ flex: "1" }}
-          value={
-            morphAdvancedParams.morphSize ? morphAdvancedParams.morphSize : ""
-          }
-          onChange={handleOnChangeMorphSize}
+          value={morphSize}
+          onChange={onChangeMorphSize}
         />
         <TextField
           id="Thresh"
@@ -173,26 +88,25 @@ const MorphAdvancedPanel = () => {
             inputProps: {
               step: 1,
               min: 1,
+              max: 7,
             },
           }}
           label="Liczba iteracji"
           color="secondary"
           sx={{ flex: "1" }}
-          value={
-            morphAdvancedParams.iterations ? morphAdvancedParams.iterations : ""
-          }
-          onChange={handleOnChangeIterations}
+          value={iterations}
+          onChange={onChangeIterations}
         />
       </StyledNumberInputsWrapper>
       <OperationSwitch
-        checked={morphAdvancedParams.grayscale}
-        onChange={handleOnChangeGrayScale}
+        checked={grayscale}
+        onChange={onChangeGrayscale}
         label="Konwertuj na obraz monochromatyczny"
       />
       <Button
         variant="contained"
-        onClick={handleOperation}
-        disabled={!isFormValid || isLoading}
+        onClick={handleAdvancedMorphOperation}
+        disabled={isLoading}
       >
         Wykonaj zaawansowaną operację morfologiczną
       </Button>

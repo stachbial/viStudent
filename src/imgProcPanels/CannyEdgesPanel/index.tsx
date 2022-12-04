@@ -11,6 +11,7 @@ import { StyledSubMethodForm, StyledInputsRowWrapper } from "./styled";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
 // TODO : set step for integer numeric input
+//TODO : secure thresholds (2'nd must be bigger than 1'st)
 
 const CannyEdgesPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);

@@ -1,94 +1,37 @@
-import React, { useState, useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext } from "react";
 import { ImageProcessingContext } from "../../store/ImageProcessingContext";
 import { IMG_PROC_METHODS, MORPH_SHAPES } from "../../utils/IMG_PROC_CONSTANTS";
-import {
-  MORPH_SHAPE_TYPE,
-  ERODE_DILATE_PARAMS,
-} from "../../types/imgProcParamsTypes";
 import { Typography, TextField, Button, MenuItem } from "@mui/material";
 import OperationSwitch from "../../components/ToggleSwitch";
 import { StyledSubMethodForm, StyledNumberInputsWrapper } from "./styled";
+import {
+  useIntegerInputState,
+  useSelectInputState,
+  useSwitchInputState,
+} from "../../hooks/inputHooks";
 
 // TODO: checkout morphSize and secure it's input
 
 const MorphDilatePanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [dilateParams, setDilateParams] = useState<ERODE_DILATE_PARAMS>({
-    grayscale: false,
-    morphShape: null,
-    morphSize: null,
-    iterations: "1",
-  });
-
-  const handleOnChangeMorphSize = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setDilateParams((prev) => {
-        return {
-          ...prev,
-          morphSize: parseInt(event.target.value).toString(),
-        };
-      });
-    },
-    [setDilateParams, dilateParams]
-  );
-
-  const handleOnChangeIterations = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setDilateParams((prev) => {
-        return {
-          ...prev,
-          iterations: parseInt(event.target.value).toString(),
-        };
-      });
-    },
-    [setDilateParams]
-  );
-
-  const handleOnChangeGrayScale = useCallback(() => {
-    event.stopPropagation();
-
-    setDilateParams((prev) => {
-      return { ...prev, grayscale: !prev.grayscale };
-    });
-  }, [setDilateParams, dilateParams]);
-
-  const handleOnChangeMorphShape = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      event.stopPropagation();
-
-      setDilateParams((prev) => {
-        return {
-          ...prev,
-          morphShape: event.target.value as MORPH_SHAPE_TYPE,
-        };
-      });
-    },
-    [setDilateParams, dilateParams]
+  const [grayscale, onChangeGrayscale] = useSwitchInputState(true);
+  const [iterations, onChangeIterations] = useIntegerInputState(1, 1, 7);
+  const [morphSize, onChangeMorphSize] = useIntegerInputState(3, 1, 11);
+  const [morphShape, onChangeMorphShape] = useSelectInputState(
+    MORPH_SHAPES[0].value
   );
 
   const handleDilateOperation = useCallback(() => {
     processImage({
       type: IMG_PROC_METHODS.DILATATION,
       payload: {
-        ...dilateParams,
-        grayscale: dilateParams.grayscale.toString(),
+        grayscale: grayscale.toString(),
+        iterations: iterations.toString(),
+        morphSize: morphSize.toString(),
+        morphShape: morphShape.toString(),
       },
     });
-  }, [dilateParams]);
-
-  useEffect(() => {
-    if (
-      dilateParams.morphShape &&
-      dilateParams.morphSize &&
-      dilateParams.iterations
-    )
-      setIsFormValid(true);
-  }, [dilateParams]);
+  }, [grayscale, iterations, morphSize, morphShape]);
 
   return (
     <StyledSubMethodForm fullWidth>
@@ -96,17 +39,15 @@ const MorphDilatePanel = () => {
         {"Dylatacja"}
       </Typography>
       <TextField
-        value={dilateParams.morphShape ? dilateParams.morphShape : ""}
+        value={morphShape}
         label="Element strukturalny"
-        onChange={handleOnChangeMorphShape}
+        onChange={onChangeMorphShape}
         color="secondary"
         select
       >
         {MORPH_SHAPES.map((morphShape) => {
           return (
-            <MenuItem
-              value={morphShape.value}
-            >{`${morphShape.name} (${morphShape.value})`}</MenuItem>
+            <MenuItem value={morphShape.value}>{morphShape.name}</MenuItem>
           );
         })}
       </TextField>
@@ -115,12 +56,12 @@ const MorphDilatePanel = () => {
           id="Thresh"
           type="number"
           inputMode="decimal"
-          InputProps={{ inputProps: { step: 2, min: 1 } }}
-          label="Wielkość el. strukturalnego"
+          InputProps={{ inputProps: { step: 2, min: 1, max: 11 } }}
+          label="Wielkość el. strukturalnego (px)"
           color="secondary"
           sx={{ flex: "1" }}
-          value={dilateParams.morphSize ? dilateParams.morphSize : ""}
-          onChange={handleOnChangeMorphSize}
+          value={morphSize}
+          onChange={onChangeMorphSize}
         />
         <TextField
           id="Thresh"
@@ -135,19 +76,19 @@ const MorphDilatePanel = () => {
           label="Liczba iteracji"
           color="secondary"
           sx={{ flex: "1" }}
-          value={dilateParams.iterations ? dilateParams.iterations : ""}
-          onChange={handleOnChangeIterations}
+          value={iterations}
+          onChange={onChangeIterations}
         />
       </StyledNumberInputsWrapper>
       <OperationSwitch
-        checked={dilateParams.grayscale}
-        onChange={handleOnChangeGrayScale}
+        checked={grayscale}
+        onChange={onChangeGrayscale}
         label="Konwertuj na obraz monochromatyczny"
       />
       <Button
         variant="contained"
         onClick={handleDilateOperation}
-        disabled={!isFormValid || isLoading}
+        disabled={isLoading}
       >
         Wykonaj operację Dylatacji
       </Button>

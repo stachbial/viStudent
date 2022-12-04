@@ -108,3 +108,22 @@ export const useSwitchInputState = (
   }, []);
   return [inputValue, handleSwitchToggle];
 };
+
+export const useSelectInputState = (
+  initialValue: string
+): [
+  string,
+  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+] => {
+  const [inputState, setInputState] = useState<string>(initialValue);
+
+  const handleSelectInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      event.stopPropagation();
+      setInputState(event.target.value);
+    },
+    [inputState, setInputState]
+  );
+
+  return [inputState, handleSelectInputChange];
+};
