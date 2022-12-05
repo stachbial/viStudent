@@ -17,8 +17,7 @@ import {
   useSwitchInputState,
   useIntegerInputState,
 } from "../../hooks/inputHooks";
-
-// TODO: enhance mask inputs validation -> negative numbers or empty input
+import { toast } from "react-toastify";
 
 const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
   const { currentImageData, processImage, isLoading } = useContext(
@@ -33,45 +32,59 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
   const [maskY, onChangeMaskY] = useIntegerInputState(0, 0, 10000, 1);
 
   const handleHistOperation = useCallback(async () => {
-    const res = await dispatchRustImageOperation({
-      type: IMG_PROC_METHODS.GET_HIST,
-      payload: {
-        img: serializeImageData(currentImageData),
-        grayscale: grayscale.toString(),
-        normalize: normalize.toString(),
-        maskH: maskH.toString(),
-        maskW: maskW.toString(),
-        maskX: maskX.toString(),
-        maskY: maskY.toString(),
-      },
-    });
-
-    if (maskEnabled) {
-      processImage({
-        type: IMG_PROC_METHODS.APPLY_RECT_MASK,
+    try {
+      const res = await dispatchRustImageOperation({
+        type: IMG_PROC_METHODS.GET_HIST,
         payload: {
+          img: serializeImageData(currentImageData),
           grayscale: grayscale.toString(),
+          normalize: normalize.toString(),
           maskH: maskH.toString(),
           maskW: maskW.toString(),
           maskX: maskX.toString(),
           maskY: maskY.toString(),
         },
       });
-    } else {
-      if (grayscale)
+
+      if (maskEnabled) {
         processImage({
-          type: IMG_PROC_METHODS.LOAD_IMAGE,
+          type: IMG_PROC_METHODS.APPLY_RECT_MASK,
           payload: {
-            img: serializeImageData(currentImageData),
             grayscale: grayscale.toString(),
+            maskH: maskH.toString(),
+            maskW: maskW.toString(),
+            maskX: maskX.toString(),
+            maskY: maskY.toString(),
           },
         });
-    }
+      } else {
+        if (grayscale)
+          processImage({
+            type: IMG_PROC_METHODS.LOAD_IMAGE,
+            payload: {
+              img: serializeImageData(currentImageData),
+              grayscale: grayscale.toString(),
+            },
+          });
+      }
 
-    const json_res = JSON.parse(
-      res.replace("Object ", "").replaceAll("String(", "").replaceAll(")", "")
-    );
-    setHistogramJsonData(json_res);
+      const json_res = JSON.parse(
+        res.replace("Object ", "").replaceAll("String(", "").replaceAll(")", "")
+      );
+      setHistogramJsonData(json_res);
+    } catch (e) {
+      console.error(`error while getting histogram data: ${e}`);
+      toast.error(e, {
+        position: "top-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
   }, [
     histogramJsonData,
     maskH,

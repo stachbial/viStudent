@@ -7,54 +7,20 @@ use std::ffi::c_uchar;
 
 use opencv::{
     core::{
-        Point2i, Scalar_, Size2i, BORDER_CONSTANT, BORDER_DEFAULT, CV_16S, CV_16U, CV_32F, CV_32S,
-        CV_32SC1, CV_32SC2, CV_64F, CV_64FC1, CV_8S, CV_8U, CV_8UC1, CV_PI, NORM_MINMAX,
+        Point2i, Size2i, BORDER_CONSTANT, BORDER_DEFAULT, CV_64FC1, CV_8U, CV_PI, NORM_MINMAX,
         ROTATE_90_COUNTERCLOCKWISE,
     },
-    // videoio,
     imgcodecs::{IMREAD_GRAYSCALE, IMREAD_UNCHANGED, IMWRITE_PNG_STRATEGY_DEFAULT},
     imgproc::{
         morphology_default_border_value, ADAPTIVE_THRESH_GAUSSIAN_C, ADAPTIVE_THRESH_MEAN_C,
-        CHAIN_APPROX_SIMPLE, COLOR_GRAY2BGR, LINE_8, LINE_AA, MORPH_BLACKHAT, MORPH_CLOSE,
-        MORPH_CROSS, MORPH_ELLIPSE, MORPH_GRADIENT, MORPH_OPEN, MORPH_RECT, MORPH_TOPHAT,
-        RETR_EXTERNAL, THRESH_BINARY, THRESH_BINARY_INV, THRESH_OTSU, THRESH_TOZERO,
-        THRESH_TOZERO_INV, THRESH_TRIANGLE, THRESH_TRUNC,
+        COLOR_GRAY2BGR, LINE_AA, MORPH_BLACKHAT, MORPH_CLOSE, MORPH_CROSS, MORPH_ELLIPSE,
+        MORPH_GRADIENT, MORPH_OPEN, MORPH_RECT, MORPH_TOPHAT, THRESH_BINARY, THRESH_BINARY_INV,
+        THRESH_OTSU, THRESH_TOZERO, THRESH_TOZERO_INV, THRESH_TRIANGLE, THRESH_TRUNC,
     },
-    // highgui,
     prelude::*,
 };
-use serde::ser::Error;
-
-// fn runopencvexample() -> opencv::Result<()> {
-//     let window = "video capture";
-//     highgui::named_window(window, 1)?;
-//     #[cfg(feature = "opencv-32")]
-//     let mut cam = videoio::VideoCapture::new_default(0)?;  // 0 is the default camera
-//     #[cfg(not(feature = "opencv-32"))]
-//     let mut cam = videoio::VideoCapture::new(0, videoio::CAP_ANY)?;  // 0 is the default camera
-//     let opened = videoio::VideoCapture::is_opened(&cam)?;
-//     if !opened {
-//         panic!("Unable to open default camera!");
-//     }
-//     loop {
-//         let mut frame = core::Mat::default();
-//         cam.read(&mut frame)?;
-//         if frame.size()?.width > 0 {
-//             highgui::imshow(window, &mut frame)?;
-//         }
-//         let key = highgui::wait_key(10)?;
-//         if key > 0 && key != 255 {
-//             break;
-//         }
-//     }
-//     Ok(())
-// }
-// runopencvexample().unwrap();
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
 // helpers:
-
 fn deserialize_img_string(img_str: &str) -> opencv::types::VectorOfu8 {
     return img_str
         .split(",")
@@ -177,87 +143,132 @@ fn create_rect_mask(
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 #[tauri::command]
-fn load_image(img: &str, grayscale: &str) -> String {
-    let image_vector = deserialize_img_string(img);
+fn load_image(img: &str, grayscale: &str) -> Result<String, String> {
+    fn handle_load_image(img: &str, grayscale: &str) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
 
-    let mut mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+        let mut mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    let output_vector = format_mat_to_u8_vector_img(&mat);
-    mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&mat);
+        mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_load_image(img, grayscale);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Wystąpił błąd podczas wczytywania obrazu. Wybierz inny plik lub uruchom aplikację ponownie".into())
+        }
+    }
 }
 
 #[tauri::command]
-fn rotate(img: &str) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
+fn rotate(img: &str) -> Result<String, String> {
+    fn handle_rotate(img: &str) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED)?;
 
-    let mut output_mat = opencv::core::Mat::default();
-    opencv::core::rotate(&initial_mat, &mut output_mat, ROTATE_90_COUNTERCLOCKWISE).unwrap();
+        let mut output_mat = opencv::core::Mat::default();
+        opencv::core::rotate(&initial_mat, &mut output_mat, ROTATE_90_COUNTERCLOCKWISE)?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_rotate(img);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Wystąpił błąd podczas rotacji obrazu.".into())
+        }
+    }
 }
 
 #[tauri::command]
-fn threshold(img: &str, thresh: &str, maxval: &str, typ: &str, grayscale: &str) -> String {
-    //formatting input image
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+fn threshold(
+    img: &str,
+    thresh: &str,
+    maxval: &str,
+    typ: &str,
+    grayscale: &str,
+) -> Result<String, String> {
+    fn handle_threshold(
+        img: &str,
+        thresh: &str,
+        maxval: &str,
+        typ: &str,
+        grayscale: &str,
+    ) -> Result<String, opencv::Error> {
+        //formatting input image
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    //setting operation params from next js
-    let mut threshold_typ;
-    match typ {
-        "THRESH_BINARY" => threshold_typ = THRESH_BINARY,
-        "THRESH_BINARY_INV" => threshold_typ = THRESH_BINARY_INV,
-        "THRESH_TRUNC" => threshold_typ = THRESH_TRUNC,
-        "THRESH_TOZERO" => threshold_typ = THRESH_TOZERO,
-        "THRESH_TOZERO_INV" => threshold_typ = THRESH_TOZERO_INV,
-        "THRESH_OTSU" => threshold_typ = THRESH_OTSU,
-        "THRESH_TRIANGLE" => threshold_typ = THRESH_TRIANGLE,
-        &_ => threshold_typ = THRESH_BINARY,
-    };
+        //setting operation params from next js
+        let mut threshold_typ;
+        match typ {
+            "THRESH_BINARY" => threshold_typ = THRESH_BINARY,
+            "THRESH_BINARY_INV" => threshold_typ = THRESH_BINARY_INV,
+            "THRESH_TRUNC" => threshold_typ = THRESH_TRUNC,
+            "THRESH_TOZERO" => threshold_typ = THRESH_TOZERO,
+            "THRESH_TOZERO_INV" => threshold_typ = THRESH_TOZERO_INV,
+            "THRESH_OTSU" => threshold_typ = THRESH_OTSU,
+            "THRESH_TRIANGLE" => threshold_typ = THRESH_TRIANGLE,
+            &_ => threshold_typ = THRESH_BINARY,
+        };
 
-    //performing operation
-    let mut output_mat = opencv::core::Mat::default();
-    opencv::imgproc::threshold(
-        &initial_mat,
-        &mut output_mat,
-        thresh.parse::<f64>().unwrap(),
-        maxval.parse::<f64>().unwrap(),
-        threshold_typ,
-    )
-    .unwrap();
+        //performing operation
+        let mut output_mat = opencv::core::Mat::default();
+        opencv::imgproc::threshold(
+            &initial_mat,
+            &mut output_mat,
+            thresh.parse::<f64>().unwrap(),
+            maxval.parse::<f64>().unwrap(),
+            threshold_typ,
+        )?;
 
-    //formatting output
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        //formatting output
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    //checking performance
+        //checking performance
 
-    //sending result
-    format!("{:?}", output_vector)
+        //sending result
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_threshold(img, thresh, maxval, typ, grayscale);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Progowanie proste: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
@@ -268,56 +279,68 @@ fn adaptive_threshold(
     threshTyp: &str,
     blockSize: &str,
     c: &str,
-    grayscale: &str,
-) -> String {
-    //formatting input image
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+) -> Result<String, String> {
+    fn handle_adaptive_threshold(
+        img: &str,
+        maxval: &str,
+        adaptiveMethod: &str,
+        threshTyp: &str,
+        blockSize: &str,
+        c: &str,
+    ) -> Result<String, opencv::Error> {
+        //formatting input image
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE)?;
 
-    //setting operation params from next js
-    let mut thresh_typ_;
-    match threshTyp {
-        "THRESH_BINARY" => thresh_typ_ = THRESH_BINARY,
-        "THRESH_BINARY_INV" => thresh_typ_ = THRESH_BINARY_INV,
-        &_ => thresh_typ_ = THRESH_BINARY,
-    };
-    let mut adaptive_method_;
-    match adaptiveMethod {
-        "ADAPTIVE_THRESH_MEAN_C" => adaptive_method_ = ADAPTIVE_THRESH_MEAN_C,
-        "ADAPTIVE_THRESH_GAUSSIAN_C" => adaptive_method_ = ADAPTIVE_THRESH_GAUSSIAN_C,
-        &_ => adaptive_method_ = ADAPTIVE_THRESH_MEAN_C,
-    };
+        //setting operation params from next js
+        let mut thresh_typ_;
+        match threshTyp {
+            "THRESH_BINARY" => thresh_typ_ = THRESH_BINARY,
+            "THRESH_BINARY_INV" => thresh_typ_ = THRESH_BINARY_INV,
+            &_ => thresh_typ_ = THRESH_BINARY,
+        };
+        let mut adaptive_method_;
+        match adaptiveMethod {
+            "ADAPTIVE_THRESH_MEAN_C" => adaptive_method_ = ADAPTIVE_THRESH_MEAN_C,
+            "ADAPTIVE_THRESH_GAUSSIAN_C" => adaptive_method_ = ADAPTIVE_THRESH_GAUSSIAN_C,
+            &_ => adaptive_method_ = ADAPTIVE_THRESH_MEAN_C,
+        };
 
-    //performing operation
-    let mut output_mat = opencv::core::Mat::default();
-    opencv::imgproc::adaptive_threshold(
-        &initial_mat,
-        &mut output_mat,
-        maxval.parse::<f64>().unwrap(),
-        adaptive_method_,
-        thresh_typ_,
-        blockSize.parse::<i32>().unwrap(),
-        c.parse::<f64>().unwrap(),
-    )
-    .unwrap();
+        //performing operation
+        let mut output_mat = opencv::core::Mat::default();
+        opencv::imgproc::adaptive_threshold(
+            &initial_mat,
+            &mut output_mat,
+            maxval.parse::<f64>().unwrap(),
+            adaptive_method_,
+            thresh_typ_,
+            blockSize.parse::<i32>().unwrap(),
+            c.parse::<f64>().unwrap(),
+        )?;
 
-    //formatting output
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        //formatting output
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    //checking performance
+        //checking performance
 
-    //sending result
-    format!("{:?}", output_vector)
+        //sending result
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_adaptive_threshold(img, maxval, adaptiveMethod, threshTyp, blockSize, c);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err(
+                "Progowanie adaptacyjne: błąd!. Upewnij się, że wprowadzono poprawne parametry"
+                    .into(),
+            )
+        }
+    }
 }
 
 #[tauri::command]
@@ -327,46 +350,62 @@ fn dilatation(
     morphSize: &str,
     iterations: &str,
     grayscale: &str,
-) -> String {
-    //formatting input image
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+) -> Result<String, String> {
+    fn handle_dilatation(
+        img: &str,
+        morphShape: &str,
+        morphSize: &str,
+        iterations: &str,
+        grayscale: &str,
+    ) -> Result<String, opencv::Error> {
+        //formatting input image
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    //setting operation params from next js
-    //setting kernel
-    let anchor = Point2i::new(-1, -1);
-    let kernel = get_morph_kernel(morphShape, morphSize, anchor);
+        //setting operation params from next js
+        //setting kernel
+        let anchor = Point2i::new(-1, -1);
+        let kernel = get_morph_kernel(morphShape, morphSize, anchor);
 
-    //performing operation
-    let mut output_mat = opencv::core::Mat::default();
-    opencv::imgproc::dilate(
-        &initial_mat,
-        &mut output_mat,
-        &kernel,
-        anchor,
-        iterations.parse::<i32>().unwrap(),
-        BORDER_CONSTANT,
-        morphology_default_border_value().unwrap(),
-    )
-    .unwrap();
+        //performing operation
+        let mut output_mat = opencv::core::Mat::default();
+        opencv::imgproc::dilate(
+            &initial_mat,
+            &mut output_mat,
+            &kernel,
+            anchor,
+            iterations.parse::<i32>().unwrap(),
+            BORDER_CONSTANT,
+            morphology_default_border_value().unwrap(),
+        )?;
 
-    //formatting output
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        //formatting output
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    //checking performance
+        //checking performance
 
-    //sending result
-    format!("{:?}", output_vector)
+        //sending result
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_dilatation(img, morphShape, morphSize, iterations, grayscale);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Dylatacja: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
@@ -376,46 +415,61 @@ fn erosion(
     morphSize: &str,
     iterations: &str,
     grayscale: &str,
-) -> String {
-    //formatting input image
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+) -> Result<String, String> {
+    fn handle_erosion(
+        img: &str,
+        morphShape: &str,
+        morphSize: &str,
+        iterations: &str,
+        grayscale: &str,
+    ) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    //setting operation params from next js
-    //setting kernel
-    let anchor = Point2i::new(-1, -1);
-    let kernel = get_morph_kernel(morphShape, morphSize, anchor);
+        //setting operation params from next js
+        //setting kernel
+        let anchor = Point2i::new(-1, -1);
+        let kernel = get_morph_kernel(morphShape, morphSize, anchor);
 
-    //performing operation
-    let mut output_mat = opencv::core::Mat::default();
-    opencv::imgproc::erode(
-        &initial_mat,
-        &mut output_mat,
-        &kernel,
-        anchor,
-        iterations.parse::<i32>().unwrap(),
-        BORDER_CONSTANT,
-        morphology_default_border_value().unwrap(),
-    )
-    .unwrap();
+        //performing operation
+        let mut output_mat = opencv::core::Mat::default();
+        opencv::imgproc::erode(
+            &initial_mat,
+            &mut output_mat,
+            &kernel,
+            anchor,
+            iterations.parse::<i32>().unwrap(),
+            BORDER_CONSTANT,
+            morphology_default_border_value().unwrap(),
+        )?;
 
-    //formatting output
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        //formatting output
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    //checking performance
+        //checking performance
 
-    //sending result
-    format!("{:?}", output_vector)
+        //sending result
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_erosion(img, morphShape, morphSize, iterations, grayscale);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Erozja: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
@@ -426,49 +480,64 @@ fn morph_advanced(
     morphSize: &str,
     iterations: &str,
     grayscale: &str,
-) -> String {
-    //formatting input image
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+) -> Result<String, String> {
+    fn handle_morph_advanced(
+        img: &str,
+        morphType: &str,
+        morphShape: &str,
+        morphSize: &str,
+        iterations: &str,
+        grayscale: &str,
+    ) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    //setting operation params from next js
-    //setting kernel
-    let anchor = Point2i::new(-1, -1);
-    let kernel = get_morph_kernel(morphShape, morphSize, anchor);
-    //getting morph_type
-    let morph_type = get_morph_type(morphType);
+        //setting operation params from next js
+        //setting kernel
+        let anchor = Point2i::new(-1, -1);
+        let kernel = get_morph_kernel(morphShape, morphSize, anchor);
+        //getting morph_type
+        let morph_type = get_morph_type(morphType);
 
-    //performing operation
-    let mut output_mat = opencv::core::Mat::default();
-    opencv::imgproc::morphology_ex(
-        &initial_mat,
-        &mut output_mat,
-        morph_type,
-        &kernel,
-        anchor,
-        iterations.parse::<i32>().unwrap(),
-        BORDER_CONSTANT,
-        morphology_default_border_value().unwrap(),
-    )
-    .unwrap();
+        //performing operation
+        let mut output_mat = opencv::core::Mat::default();
+        opencv::imgproc::morphology_ex(
+            &initial_mat,
+            &mut output_mat,
+            morph_type,
+            &kernel,
+            anchor,
+            iterations.parse::<i32>().unwrap(),
+            BORDER_CONSTANT,
+            morphology_default_border_value().unwrap(),
+        )?;
 
-    //formatting output
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        //formatting output
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    //checking performance
+        //sending result
+        Ok(format!("{:?}", output_vector))
+    }
 
-    //sending result
-    format!("{:?}", output_vector)
+    let result =
+        handle_morph_advanced(img, morphType, morphShape, morphSize, iterations, grayscale);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Zaawansowane Warianty Operacji Morfologicznych: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
@@ -480,100 +549,117 @@ fn get_hist(
     maskW: &str,
     maskX: &str,
     maskY: &str,
-) -> String {
-    //formatting input image
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+) -> Result<String, String> {
+    fn handle_get_hist(
+        img: &str,
+        grayscale: &str,
+        normalize: &str,
+        maskH: &str,
+        maskW: &str,
+        maskX: &str,
+        maskY: &str,
+    ) -> Result<String, opencv::Error> {
+        //formatting input image
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    let mask = create_rect_mask(
-        maskH,
-        maskW,
-        maskX,
-        maskY,
-        initial_mat.size().unwrap().width,
-        initial_mat.size().unwrap().height,
-    );
+        let mask = create_rect_mask(
+            maskH,
+            maskW,
+            maskX,
+            maskY,
+            initial_mat.size().unwrap().width,
+            initial_mat.size().unwrap().height,
+        );
 
-    //getting color channels as vector of channel's mat
-    let mut channel_vector = opencv::types::VectorOfMat::new();
-    opencv::core::split(&initial_mat, &mut channel_vector).unwrap();
+        //getting color channels as vector of channel's mat
+        let mut channel_vector = opencv::types::VectorOfMat::new();
+        opencv::core::split(&initial_mat, &mut channel_vector)?;
 
-    //initialize variables
-    let mut buff_mat = opencv::core::Mat::default();
+        //initialize variables
+        let mut buff_mat = opencv::core::Mat::default();
 
-    let mut channel_output_vec = opencv::types::VectorOfi32::new();
-    let mut current_val;
-    let mut current_channel;
+        let mut channel_output_vec = opencv::types::VectorOfi32::new();
+        let mut current_val;
+        let mut current_channel;
 
-    let mut map = serde_json::Map::new();
-    let mut channel_json_key;
-    let mut hist_json_value;
-    //getting histogram data for each channel
+        let mut map = serde_json::Map::new();
+        let mut channel_json_key;
+        let mut hist_json_value;
+        //getting histogram data for each channel
 
-    for channel_ in 0..channel_vector.len() {
-        current_channel = channel_ as i32;
+        for channel_ in 0..channel_vector.len() {
+            current_channel = channel_ as i32;
 
-        //calc histogram data
-        opencv::imgproc::calc_hist(
-            &channel_vector,
-            &opencv::core::Vector::from(vec![current_channel]),
-            &mask,
-            &mut buff_mat,
-            &opencv::core::Vector::from(vec![256]),
-            &opencv::core::Vector::from(vec![0., 256.]),
-            false,
-        )
-        .unwrap();
+            //calc histogram data
+            opencv::imgproc::calc_hist(
+                &channel_vector,
+                &opencv::core::Vector::from(vec![current_channel]),
+                &mask,
+                &mut buff_mat,
+                &opencv::core::Vector::from(vec![256]),
+                &opencv::core::Vector::from(vec![0., 256.]),
+                false,
+            )?;
 
-        let mut channel_output_mat = buff_mat.clone();
+            let mut channel_output_mat = buff_mat.clone();
 
-        if normalize == "true" {
-            opencv::core::normalize(
-                &buff_mat,
-                &mut channel_output_mat,
-                0.,
-                100.,
-                NORM_MINMAX,
-                -1,
-                &opencv::core::Mat::default(),
-            )
-            .unwrap();
+            if normalize == "true" {
+                opencv::core::normalize(
+                    &buff_mat,
+                    &mut channel_output_mat,
+                    0.,
+                    100.,
+                    NORM_MINMAX,
+                    -1,
+                    &opencv::core::Mat::default(),
+                )?;
+            }
+
+            //parsing mat values to a vector
+            for row in 0..channel_output_mat.rows() {
+                current_val = *channel_output_mat.at::<f32>(row).unwrap();
+                channel_output_vec.push(current_val as i32);
+            }
+
+            //appending output to JSON
+            channel_json_key = current_channel.to_string();
+            hist_json_value = format!("{:?}", channel_output_vec);
+            map.insert(channel_json_key, serde_json::Value::String(hist_json_value));
+
+            //releasing memory
+            channel_output_mat.release()?;
+            channel_output_vec.clear();
         }
 
-        //parsing mat values to a vector
-        for row in 0..channel_output_mat.rows() {
-            current_val = *channel_output_mat.at::<f32>(row).unwrap();
-            channel_output_vec.push(current_val as i32);
-        }
+        //formatting output
+        let output_json = serde_json::Value::Object(map);
 
-        //appending output to JSON
-        channel_json_key = current_channel.to_string();
-        hist_json_value = format!("{:?}", channel_output_vec);
-        map.insert(channel_json_key, serde_json::Value::String(hist_json_value));
+        initial_mat.release()?;
+        buff_mat.release()?;
 
-        //releasing memory
-        channel_output_mat.release().unwrap();
-        channel_output_vec.clear();
+        //checking performance
+
+        //sending result
+        Ok(format!("{:?}", output_json))
     }
 
-    //formatting output
-    let output_json = serde_json::Value::Object(map);
+    let result = handle_get_hist(img, grayscale, normalize, maskH, maskW, maskX, maskY);
 
-    initial_mat.release().unwrap();
-    buff_mat.release().unwrap();
-
-    //checking performance
-
-    //sending result
-    format!("{:?}", output_json)
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Wystąpił błąd uzyskiwania danych histogramu. Wybierz inny obraz lub uruchom aplikację ponownie".into())
+        }
+    }
 }
 
 #[tauri::command]
@@ -584,61 +670,90 @@ fn apply_rect_mask(
     maskW: &str,
     maskX: &str,
     maskY: &str,
-) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+) -> Result<String, String> {
+    fn handle_apply_rect_mask(
+        img: &str,
+        grayscale: &str,
+        maskH: &str,
+        maskW: &str,
+        maskX: &str,
+        maskY: &str,
+    ) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    let mask = create_rect_mask(
-        maskH,
-        maskW,
-        maskX,
-        maskY,
-        initial_mat.size().unwrap().width,
-        initial_mat.size().unwrap().height,
-    );
-    let mut output_mat = opencv::core::Mat::default();
+        let mask = create_rect_mask(
+            maskH,
+            maskW,
+            maskX,
+            maskY,
+            initial_mat.size().unwrap().width,
+            initial_mat.size().unwrap().height,
+        );
+        let mut output_mat = opencv::core::Mat::default();
 
-    opencv::core::bitwise_and(&initial_mat, &initial_mat, &mut output_mat, &mask).unwrap();
+        opencv::core::bitwise_and(&initial_mat, &initial_mat, &mut output_mat, &mask)?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_apply_rect_mask(img, grayscale, maskH, maskW, maskX, maskY);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Maska prostokątna: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
-fn convolve(img: &str, kernel: &str) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED).unwrap();
+fn convolve(img: &str, kernel: &str) -> Result<String, String> {
+    fn handle_convolve(img: &str, kernel: &str) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED)?;
 
-    let kernel_mat = deserialize_kernel_string(kernel);
-    let mut output_mat = opencv::core::Mat::default();
+        let kernel_mat = deserialize_kernel_string(kernel);
+        let mut output_mat = opencv::core::Mat::default();
 
-    opencv::imgproc::filter_2d(
-        &initial_mat,
-        &mut output_mat,
-        -1,
-        &kernel_mat,
-        Point2i::new(-1, -1),
-        0.0,
-        BORDER_DEFAULT,
-    )
-    .unwrap();
+        opencv::imgproc::filter_2d(
+            &initial_mat,
+            &mut output_mat,
+            -1,
+            &kernel_mat,
+            Point2i::new(-1, -1),
+            0.0,
+            BORDER_DEFAULT,
+        )?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_convolve(img, kernel);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Konwolucja: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
@@ -648,68 +763,98 @@ fn gaussian_blur(
     kernelW: &str,
     kernelH: &str,
     stdDeviation: &str,
-) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+) -> Result<String, String> {
+    fn handle_gaussian_blur(
+        img: &str,
+        grayscale: &str,
+        kernelW: &str,
+        kernelH: &str,
+        stdDeviation: &str,
+    ) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    let gauss_ksize = Size2i::new(
-        kernelW.parse::<i32>().unwrap(),
-        kernelH.parse::<i32>().unwrap(),
-    );
-    let mut output_mat = opencv::core::Mat::default();
+        let gauss_ksize = Size2i::new(
+            kernelW.parse::<i32>().unwrap(),
+            kernelH.parse::<i32>().unwrap(),
+        );
+        let mut output_mat = opencv::core::Mat::default();
 
-    opencv::imgproc::gaussian_blur(
-        &initial_mat,
-        &mut output_mat,
-        gauss_ksize,
-        stdDeviation.parse::<f64>().unwrap(),
-        0.0,
-        BORDER_DEFAULT,
-    )
-    .unwrap();
+        opencv::imgproc::gaussian_blur(
+            &initial_mat,
+            &mut output_mat,
+            gauss_ksize,
+            stdDeviation.parse::<f64>().unwrap(),
+            0.0,
+            BORDER_DEFAULT,
+        )?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_gaussian_blur(img, grayscale, kernelW, kernelH, stdDeviation);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Rozmycie Gaussa: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
-fn median_blur(img: &str, grayscale: &str, aperture: &str) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+fn median_blur(img: &str, grayscale: &str, aperture: &str) -> Result<String, String> {
+    fn handle_median_blur(
+        img: &str,
+        grayscale: &str,
+        aperture: &str,
+    ) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    let mut output_mat = opencv::core::Mat::default();
+        let mut output_mat = opencv::core::Mat::default();
 
-    opencv::imgproc::median_blur(
-        &initial_mat,
-        &mut output_mat,
-        aperture.parse::<i32>().unwrap(),
-    )
-    .unwrap();
+        opencv::imgproc::median_blur(
+            &initial_mat,
+            &mut output_mat,
+            aperture.parse::<i32>().unwrap(),
+        )?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_median_blur(img, grayscale, aperture);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Rozmycie Medianowe: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
@@ -719,111 +864,175 @@ fn bilateral_blur(
     d: &str,
     sigmaColor: &str,
     sigmaSpace: &str,
-) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(
-        &image_vector,
-        if grayscale == "true" {
-            IMREAD_GRAYSCALE
-        } else {
-            IMREAD_UNCHANGED
-        },
-    )
-    .unwrap();
+) -> Result<String, String> {
+    fn handle_bilateral_blur(
+        img: &str,
+        grayscale: &str,
+        d: &str,
+        sigmaColor: &str,
+        sigmaSpace: &str,
+    ) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(
+            &image_vector,
+            if grayscale == "true" {
+                IMREAD_GRAYSCALE
+            } else {
+                IMREAD_UNCHANGED
+            },
+        )?;
 
-    let mut output_mat = opencv::core::Mat::default();
+        let mut output_mat = opencv::core::Mat::default();
 
-    opencv::imgproc::bilateral_filter(
-        &initial_mat,
-        &mut output_mat,
-        d.parse::<i32>().unwrap(),
-        sigmaColor.parse::<f64>().unwrap(),
-        sigmaSpace.parse::<f64>().unwrap(),
-        BORDER_DEFAULT,
-    )
-    .unwrap();
+        opencv::imgproc::bilateral_filter(
+            &initial_mat,
+            &mut output_mat,
+            d.parse::<i32>().unwrap(),
+            sigmaColor.parse::<f64>().unwrap(),
+            sigmaSpace.parse::<f64>().unwrap(),
+            BORDER_DEFAULT,
+        )?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_bilateral_blur(img, grayscale, d, sigmaColor, sigmaSpace);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Filtr Bilateralny: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
-fn canny_edges(img: &str, threshold1: &str, threshold2: &str, L2gradient: &str) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE).unwrap();
+fn canny_edges(
+    img: &str,
+    threshold1: &str,
+    threshold2: &str,
+    L2gradient: &str,
+) -> Result<String, String> {
+    fn handle_canny_edges(
+        img: &str,
+        threshold1: &str,
+        threshold2: &str,
+        L2gradient: &str,
+    ) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE)?;
 
-    let mut output_mat = opencv::core::Mat::default();
+        let mut output_mat = opencv::core::Mat::default();
 
-    opencv::imgproc::canny(
-        &initial_mat,
-        &mut output_mat,
-        threshold1.parse::<f64>().unwrap(),
-        threshold2.parse::<f64>().unwrap(),
-        3,
-        if L2gradient == "true" { true } else { false },
-    )
-    .unwrap();
+        opencv::imgproc::canny(
+            &initial_mat,
+            &mut output_mat,
+            threshold1.parse::<f64>().unwrap(),
+            threshold2.parse::<f64>().unwrap(),
+            3,
+            if L2gradient == "true" { true } else { false },
+        )?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_canny_edges(img, threshold1, threshold2, L2gradient);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Filtr Canny'ego: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
-fn sobel_edges(img: &str, dx: &str, dy: &str, ksize: &str) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE).unwrap();
+fn sobel_edges(img: &str, dx: &str, dy: &str, ksize: &str) -> Result<String, String> {
+    fn handle_sobel_edges(
+        img: &str,
+        dx: &str,
+        dy: &str,
+        ksize: &str,
+    ) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE)?;
 
-    let mut output_mat = opencv::core::Mat::default();
+        let mut output_mat = opencv::core::Mat::default();
 
-    opencv::imgproc::sobel(
-        &initial_mat,
-        &mut output_mat,
-        CV_8U,
-        dx.parse::<i32>().unwrap(),
-        dy.parse::<i32>().unwrap(),
-        ksize.parse::<i32>().unwrap(),
-        1.0,
-        0.0,
-        BORDER_DEFAULT,
-    )
-    .unwrap();
+        opencv::imgproc::sobel(
+            &initial_mat,
+            &mut output_mat,
+            CV_8U,
+            dx.parse::<i32>().unwrap(),
+            dy.parse::<i32>().unwrap(),
+            ksize.parse::<i32>().unwrap(),
+            1.0,
+            0.0,
+            BORDER_DEFAULT,
+        )?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_sobel_edges(img, dx, dy, ksize);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Filtr Sobel'a: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
-fn laplacian_edges(img: &str, ksize: &str) -> String {
-    let image_vector = deserialize_img_string(img);
-    let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE).unwrap();
+fn laplacian_edges(img: &str, ksize: &str) -> Result<String, String> {
+    fn handle_laplacian_edges(img: &str, ksize: &str) -> Result<String, opencv::Error> {
+        let image_vector = deserialize_img_string(img);
+        let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE)?;
 
-    let mut output_mat = opencv::core::Mat::default();
+        let mut output_mat = opencv::core::Mat::default();
 
-    opencv::imgproc::laplacian(
-        &initial_mat,
-        &mut output_mat,
-        CV_8U,
-        ksize.parse::<i32>().unwrap(),
-        1.0,
-        0.0,
-        BORDER_DEFAULT,
-    )
-    .unwrap();
+        opencv::imgproc::laplacian(
+            &initial_mat,
+            &mut output_mat,
+            CV_8U,
+            ksize.parse::<i32>().unwrap(),
+            1.0,
+            0.0,
+            BORDER_DEFAULT,
+        )?;
 
-    let output_vector = format_mat_to_u8_vector_img(&output_mat);
-    initial_mat.release().unwrap();
-    output_mat.release().unwrap();
+        let output_vector = format_mat_to_u8_vector_img(&output_mat);
+        initial_mat.release()?;
+        output_mat.release()?;
 
-    format!("{:?}", output_vector)
+        Ok(format!("{:?}", output_vector))
+    }
+
+    let result = handle_laplacian_edges(img, ksize);
+
+    match result {
+        Ok(result) => Ok(result),
+        Err(error) => {
+            println!("{:?}", error);
+            Err("Filtr Laplace'a: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+        }
+    }
 }
 
 #[tauri::command]
@@ -834,6 +1043,7 @@ fn hough_lines_p(
     threshold: &str,
     minLineLength: &str,
     maxLineGap: &str,
+    lineColor: &str,
 ) -> Result<String, String> {
     fn handle_hough_lines_p(
         img: &str,
@@ -842,11 +1052,20 @@ fn hough_lines_p(
         threshold: &str,
         minLineLength: &str,
         maxLineGap: &str,
+        lineColor: &str,
     ) -> Result<String, opencv::Error> {
         let image_vector = deserialize_img_string(img);
         let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_UNCHANGED)?;
 
         let mut output_mat = opencv::core::Mat::default();
+
+        let mut line_color = opencv::core::Scalar::default();
+        match lineColor {
+            "red" => line_color = opencv::core::Scalar::new(0., 0., 255., 0.),
+            "blue" => line_color = opencv::core::Scalar::new(255., 0., 0., 0.),
+            "green" => line_color = opencv::core::Scalar::new(0., 255., 0., 0.),
+            &_ => line_color = opencv::core::Scalar::new(0., 0., 255., 0.),
+        };
 
         //creating template mat for lines
         opencv::imgproc::cvt_color(&initial_mat, &mut output_mat, COLOR_GRAY2BGR, 0)?;
@@ -869,7 +1088,7 @@ fn hough_lines_p(
                 &mut output_mat,
                 opencv::core::Point2i::new(line_p[0], line_p[1]),
                 opencv::core::Point2i::new(line_p[2], line_p[3]),
-                opencv::core::Scalar::new(0., 0., 255., 0.),
+                line_color,
                 1,
                 LINE_AA,
                 0,
@@ -883,13 +1102,21 @@ fn hough_lines_p(
         Ok(format!("{:?}", output_vector))
     }
 
-    let result = handle_hough_lines_p(img, rho, theta, threshold, minLineLength, maxLineGap);
+    let result = handle_hough_lines_p(
+        img,
+        rho,
+        theta,
+        threshold,
+        minLineLength,
+        maxLineGap,
+        lineColor,
+    );
 
     match result {
         Ok(result) => Ok(result),
         Err(error) => {
             println!("{:?}", error);
-            Err("Transformata Hougha: błędne paramerty. Obraz powinien mieć postać jedno-kanałową (najlepiej zbinaryzowaną, patrz: Filtr Canny'ego).".into())
+            Err("Transformata Hougha: błędne paramerty. Upewnij się, że obraz ma postać jednokanałową (najlepiej zbinaryzowaną), a parametry akumulatora właściwie dobrane względem siebie.".into())
         }
     }
 }
@@ -947,120 +1174,10 @@ fn dist_transf(img: &str, distanceType: &str, maskSize: &str) -> Result<String, 
         Ok(result) => Ok(result),
         Err(error) => {
             println!("{:?}", error);
-            Err("Transformata Dystansowa: błędne paramerty. Wartości numeryczne (np. 3x3) można uzyć tylko dla metod L1, L2, C.".into())
+            Err("Transformata Dystansowa: błędne paramerty. Wartości numeryczne rozmiaru maski (np. 3x3) można uzyć tylko dla metod L1, L2, C.".into())
         }
     }
 }
-
-// #[tauri::command]
-// fn watershed(img: &str) -> Result<String, String> {
-//     fn handle_watershed(img: &str) -> Result<String, opencv::Error> {
-//
-
-//         let image_vector = deserialize_img_string(img);
-//         let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE)?;
-
-//         let mut buff_mat = opencv::core::Mat::default();
-//         let mut output_mat = opencv::core::Mat::default();
-
-//         let mut contours = opencv::types::VectorOfVectorOfPoint::new();
-//         opencv::imgproc::find_contours(
-//             &initial_mat,
-//             &mut contours,
-//             RETR_EXTERNAL,
-//             CHAIN_APPROX_SIMPLE,
-//             opencv::core::Point_::<i32>::default(),
-//         )?;
-
-//         let mut markers_mat =
-//             opencv::core::Mat::zeros_size(initial_mat.size().unwrap(), CV_32S)?.a();
-
-//         for contour in 0..contours.len() {
-//             opencv::imgproc::draw_contours(
-//                 &mut markers_mat,
-//                 &contours,
-//                 contour as i32,
-//                 opencv::core::Scalar_::all(contour as f64 + 1.0),
-//                 1,
-//                 LINE_AA,
-//                 &opencv::core::no_array(),
-//                 0,
-//                 opencv::core::Point_::<i32>::default(),
-//             )?;
-//         }
-
-//         opencv::imgproc::circle(
-//             &mut markers_mat,
-//             opencv::core::Point_::<i32>::new(5, 5),
-//             3,
-//             opencv::core::Scalar::all(255.),
-//             -1,
-//             LINE_8,
-//             0,
-//         )?;
-
-//         let mut markers_mat_u8 = opencv::core::Mat::default();
-//         markers_mat.convert_to(&mut markers_mat_u8, CV_8U, 10., 0.)?;
-
-//         opencv::imgproc::watershed(&initial_mat, &mut markers_mat)?;
-
-//         let mut mark = opencv::core::Mat::default();
-//         let mark_8u = opencv::core::Mat::default();
-//         let mut mark_bit = opencv::core::Mat::default();
-
-//         markers_mat.convert_to(&mut mark, CV_8U, 1.0, 0.)?;
-
-//         opencv::core::bitwise_not(&mut mark, &mut mark_bit, &opencv::core::Mat::default())?;
-
-//         let mut colors = Vec::<opencv::core::Vec3b>::new();
-
-//         // = opencv::types::VectorOfVec3i::new();
-//         // let x = opencv::core::Vec3b::default()
-//         for _contour in contours {
-//             let b = opencv::core::the_rng()?.uniform(0, 256)?;
-//             let r = opencv::core::the_rng()?.uniform(0, 256)?;
-//             let g = opencv::core::the_rng()?.uniform(0, 256)?;
-
-//             let mut color = opencv::core::Vec3b::default();
-//             color.0 = [b as u8, r as u8, g as u8];
-//             colors.push(color)
-//         }
-
-//         output_mat = opencv::core::Mat::clone(&mark_bit);
-
-//         let size = mark_bit.size()?;
-//         let rows = size.width as i32;
-//         let cols = size.height as i32;
-
-//         for row in 0..rows {
-//             for col in 0..cols {
-//                 let mut index = mark_bit.at_2d_mut::<c_uchar>(row, col).unwrap() as usize;
-//                 // let c = contours.len();
-//                 if index > &mut 0 && index <= contours.len() {
-//                     let mut x = output_mat.at_2d_mut::<c_uchar>(row, col)?;
-//                     // *x = colors[*index] ;
-//                 }
-//             }
-//         }
-
-//         let output_vector = format_mat_to_u8_vector_img(&output_mat);
-//         initial_mat.release()?;
-//         output_mat.release()?;
-
-//
-//         Ok(format!("{:?}", output_vector))
-//     }
-
-//     let result = handle_watershed(img);
-
-//     match result {
-//         Ok(result) => Ok(result),
-//         Err(error) => {
-//             println!("{:?}", error);
-//             Err("Segmentacja wododziałowa: błędne paramerty.".into())
-//         }
-//     }
-// }
 
 fn main() {
     tauri::Builder::default()

@@ -98,7 +98,7 @@ export const ImageProcessingContextProvider = ({ children }) => {
             };
           });
         } catch (e) {
-          console.error(`error while handling rust img operation: `);
+          console.error(`error while handling rust img operation: ${e}`);
           toast.error(e, {
             position: "top-right",
             autoClose: false,
