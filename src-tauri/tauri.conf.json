@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "viStudent",
-    "version": "0.0.0"
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -17,7 +17,7 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
-      "copyright": "",
+      "copyright": "Stanislaw Bialecki, Politechnika Gdanska 2022",
       "deb": {
         "depends": []
       },
@@ -38,13 +38,14 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
-      "shortDescription": "",
+      "resources": ["./opencv_world460.dll"],
+      "shortDescription": "S. Bialecki's engineering graduation project. Gdansk University of Technology 2022",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "wix": { "language": "pl-PL" }
       }
     },
     "security": {

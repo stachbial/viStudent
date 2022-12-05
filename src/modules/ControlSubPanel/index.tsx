@@ -109,12 +109,12 @@ const ControlSubPanel = ({ displayedSubPanel }) => {
           <HoughLines />
         </MotionSubPanelContainer>
       );
-    case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.DISTANCE_TRANSFORM:
-      return (
-        <MotionSubPanelContainer presenceKey={displayedSubPanel}>
-          <DistanceTransfPanel />
-        </MotionSubPanelContainer>
-      );
+    // case IMG_PROC_PANELS_DATA.MORPH_OPERATIONS.PANELS.DISTANCE_TRANSFORM:
+    //   return (
+    //     <MotionSubPanelContainer presenceKey={displayedSubPanel}>
+    //       <DistanceTransfPanel />
+    //     </MotionSubPanelContainer>
+    //   );
     default:
       return <div>No such panel found :/</div>;
   }
