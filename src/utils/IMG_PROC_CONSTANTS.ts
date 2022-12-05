@@ -1,6 +1,5 @@
 export const SUPPORTED_IMG_EXTENSIONS = [
   "jpeg",
-  "gif",
   "png",
   "svg",
   "bmp",
