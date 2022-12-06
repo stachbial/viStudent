@@ -1116,7 +1116,7 @@ fn hough_lines_p(
         Ok(result) => Ok(result),
         Err(error) => {
             println!("{:?}", error);
-            Err("Transformata Hougha: błędne paramerty. Upewnij się, że obraz ma postać jednokanałową (najlepiej zbinaryzowaną), a parametry akumulatora właściwie dobrane względem siebie.".into())
+            Err("Transformata Hougha: błędne paramerty. Upewnij się, że obraz ma postać jednokanałową (najlepiej zbinaryzowaną), a parametry akumulatora są właściwie dobrane względem siebie.".into())
         }
     }
 }
