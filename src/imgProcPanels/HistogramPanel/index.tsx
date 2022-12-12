@@ -94,6 +94,7 @@ const HistogramPanel = ({ maskEnabled }: { maskEnabled?: boolean }) => {
     grayscale,
     normalize,
     currentImageData,
+    processImage,
   ]);
 
   return (

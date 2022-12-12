@@ -10,9 +10,6 @@ import ToggleSwitch from "../../components/ToggleSwitch";
 import { StyledSubMethodForm, StyledInputsRowWrapper } from "./styled";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
-// TODO : set step for integer numeric input
-//TODO : secure thresholds (2'nd must be bigger than 1'st)
-
 const CannyEdgesPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [threshold1, onChangeThreshold1] = useIntegerInputState(100, 0, 255, 1);
@@ -28,7 +25,7 @@ const CannyEdgesPanel = () => {
         L2gradient: L2gradient.toString(),
       },
     });
-  }, [L2gradient, threshold1, threshold2]);
+  }, [L2gradient, threshold1, threshold2, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

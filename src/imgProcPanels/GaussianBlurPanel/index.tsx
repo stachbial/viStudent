@@ -10,8 +10,6 @@ import ToggleSwitch from "../../components/ToggleSwitch";
 import { StyledSubMethodForm, StyledInputsRowWrapper } from "./styled";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
-// TODO : set step for integer numeric input
-
 const GaussianBlurPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [grayscale, toggleGrayscale] = useSwitchInputState(false);
@@ -34,7 +32,7 @@ const GaussianBlurPanel = () => {
         stdDeviation: stdDeviation.toString(),
       },
     });
-  }, [grayscale, kernelW, kernelH, stdDeviation]);
+  }, [grayscale, kernelW, kernelH, stdDeviation, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

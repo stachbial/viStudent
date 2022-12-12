@@ -9,8 +9,6 @@ import { Typography, TextField, MenuItem, Button } from "@mui/material";
 import { StyledSubMethodForm, StyledInputsWrapper } from "./styled";
 import { IMG_PROC_METHODS, LINE_COLORS } from "../../utils/IMG_PROC_CONSTANTS";
 
-// TODO : Secure input, reproduce 12,1,180,5,5
-
 const HoughLines = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [threshold, onChangeThreshold] = useIntegerInputState(1, 1, 255);
@@ -40,7 +38,15 @@ const HoughLines = () => {
         lineColor: lineColor,
       },
     });
-  }, [threshold, rho, theta, maxLineGap, minLineLength, lineColor]);
+  }, [
+    threshold,
+    rho,
+    theta,
+    maxLineGap,
+    minLineLength,
+    lineColor,
+    processImage,
+  ]);
 
   return (
     <StyledSubMethodForm>

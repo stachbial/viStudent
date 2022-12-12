@@ -14,7 +14,6 @@ import { serializeImageData } from "../../utils/dataFormattingHelpers";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 import MotionContainer from "../../components/MotionContainer";
 import { leftCardVariants, rightCardVariants } from "./motion";
-// TODO: rozkminic czy nie sciagnac stany z webview modal i uzywac contextu tylko tu
 
 const HomePagePanel = () => {
   const router = useRouter();

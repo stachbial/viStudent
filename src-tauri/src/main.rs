@@ -994,7 +994,7 @@ fn sobel_edges(img: &str, dx: &str, dy: &str, ksize: &str) -> Result<String, Str
         Ok(result) => Ok(result),
         Err(error) => {
             println!("{:?}", error);
-            Err("Filtr Sobel'a: błąd!. Upewnij się, że wprowadzono poprawne parametry".into())
+            Err("Filtr Sobel'a: błąd!. Upewnij się, że rzędy pochodznych są mniejsze od rozmiaru maski".into())
         }
     }
 }
@@ -1121,64 +1121,6 @@ fn hough_lines_p(
     }
 }
 
-#[tauri::command]
-fn dist_transf(img: &str, distanceType: &str, maskSize: &str) -> Result<String, String> {
-    fn handle_dist_transf(
-        img: &str,
-        distanceType: &str,
-        maskSize: &str,
-    ) -> Result<String, opencv::Error> {
-        let image_vector = deserialize_img_string(img);
-        let mut initial_mat = opencv::imgcodecs::imdecode(&image_vector, IMREAD_GRAYSCALE)?;
-
-        let mut output_mat = opencv::core::Mat::default();
-
-        let mut distance_type;
-        match distanceType {
-            "DIST_L1" => distance_type = opencv::imgproc::DIST_L1,
-            "DIST_L2" => distance_type = opencv::imgproc::DIST_L2,
-            "DIST_C" => distance_type = opencv::imgproc::DIST_C,
-            "DIST_L12" => distance_type = opencv::imgproc::DIST_L12,
-            "DIST_FAIR" => distance_type = opencv::imgproc::DIST_FAIR,
-            "DIST_WELSCH" => distance_type = opencv::imgproc::DIST_WELSCH,
-            "DIST_HUBER" => distance_type = opencv::imgproc::DIST_HUBER,
-            &_ => distance_type = opencv::imgproc::DIST_L1,
-        };
-
-        let mut mask_size;
-        match maskSize {
-            "DIST_MASK_3" => mask_size = opencv::imgproc::DIST_MASK_3,
-            "DIST_MASK_5" => mask_size = opencv::imgproc::DIST_MASK_5,
-            "DIST_MASK_PRECISE" => mask_size = opencv::imgproc::DIST_MASK_PRECISE,
-            &_ => mask_size = opencv::imgproc::DIST_MASK_3,
-        }
-
-        opencv::imgproc::distance_transform(
-            &initial_mat,
-            &mut output_mat,
-            distance_type,
-            mask_size,
-            CV_8U,
-        )?;
-
-        let output_vector = format_mat_to_u8_vector_img(&output_mat);
-        initial_mat.release()?;
-        output_mat.release()?;
-
-        Ok(format!("{:?}", output_vector))
-    }
-
-    let result = handle_dist_transf(img, distanceType, maskSize);
-
-    match result {
-        Ok(result) => Ok(result),
-        Err(error) => {
-            println!("{:?}", error);
-            Err("Transformata Dystansowa: błędne paramerty. Wartości numeryczne rozmiaru maski (np. 3x3) można uzyć tylko dla metod L1, L2, C.".into())
-        }
-    }
-}
-
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -1198,8 +1140,7 @@ fn main() {
             canny_edges,
             sobel_edges,
             laplacian_edges,
-            hough_lines_p,
-            dist_transf
+            hough_lines_p
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

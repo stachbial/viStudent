@@ -37,7 +37,7 @@ const MorphAdvancedPanel = () => {
         morphType: morphType.toString(),
       },
     });
-  }, [grayscale, iterations, morphSize, morphShape, morphType]);
+  }, [grayscale, iterations, morphSize, morphShape, morphType, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

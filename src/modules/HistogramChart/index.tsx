@@ -14,8 +14,6 @@ import { formatHistJSONtoChartData } from "../../utils/dataFormattingHelpers";
 import { histChartLineColors } from "../../theme/theme";
 import { theme } from "../../theme/theme";
 
-// TODO: colors edge case when more than 4 channels !!!!!!!
-// TODO: check out data normalization in rust
 
 const HistogramChart = ({ jsonData }) => {
   const [chartData, setChartData] = useState<any>(null);

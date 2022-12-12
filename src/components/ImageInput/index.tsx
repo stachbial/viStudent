@@ -9,7 +9,6 @@ import {
   validateImageFormat,
   validateImageDimensions,
 } from "../../utils/inputValidation";
-// TODO: adjust next/image formats to opencv formats!! !!!
 
 const ImageInput = ({
   children,

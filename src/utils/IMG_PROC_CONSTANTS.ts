@@ -43,7 +43,6 @@ export const IMG_PROC_PANELS_DATA = {
       DILATE: "Dylatacja",
       ERODE: "Erozja",
       ADVANCED: "Warianty zaawansowane",
-      // DISTANCE_TRANSFORM: "Transformata dystansowa",
     },
   },
   SEGMENTATION: {
@@ -79,7 +78,6 @@ export const IMG_PROC_METHODS = {
   SOBEL_EDGES: "sobel_edges",
   LAPLACIAN_EDGES: "laplacian_edges",
   HOUGH_LINES_P: "hough_lines_p",
-  DISTANCE_TRANSFORM: "dist_transf",
 };
 
 export const THRESHOLD_TYPES = [

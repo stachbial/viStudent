@@ -5,8 +5,6 @@ import { Typography, TextField, Button } from "@mui/material";
 import { StyledSubMethodForm } from "./styled";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
-// TODO : set step for integer numeric input
-
 const LaplacianPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [ksize, onChangeKsize] = useIntegerInputState(1, 1, 9);
@@ -18,7 +16,7 @@ const LaplacianPanel = () => {
         ksize: ksize.toString(),
       },
     });
-  }, [ksize]);
+  }, [ksize, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

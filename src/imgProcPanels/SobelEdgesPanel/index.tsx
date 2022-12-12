@@ -5,13 +5,11 @@ import { Typography, TextField, Button } from "@mui/material";
 import { StyledSubMethodForm, StyledInputsRowWrapper } from "./styled";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
-// TODO : set step for integer numeric input
-
 const SobelEdgesPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
-  const [dx, onChangeDx, setDx] = useIntegerInputState(1, 0, 15, 1);
-  const [dy, onChangeDy, setDy] = useIntegerInputState(1, 0, 15, 1);
-  const [ksize, onChangeKsize] = useIntegerInputState(3, 1, 7);
+  const [dx, onChangeDx, setDx] = useIntegerInputState(1, 0, 8, 1);
+  const [dy, onChangeDy, setDy] = useIntegerInputState(1, 0, 8, 1);
+  const [ksize, onChangeKsize] = useIntegerInputState(3, 1, 10);
 
   const handleBilateralBlurOperation = useCallback(() => {
     processImage({
@@ -22,18 +20,18 @@ const SobelEdgesPanel = () => {
         ksize: ksize.toString(),
       },
     });
-  }, [ksize, dy, dx]);
+  }, [ksize, dy, dx, processImage]);
 
   // if ksize >1 and order >= ksize
 
-  useEffect(() => {
-    //validation -> order must be less than ksize when ksize > 1
-    if (ksize > 1) {
-      const corr = ksize - 1;
-      if (dx >= ksize) setDx(corr.toString());
-      if (dy >= ksize) setDy(corr.toString());
-    }
-  }, [dx, onChangeDx, dy, onChangeDy, ksize]);
+  // useEffect(() => {
+  //   //validation -> order must be less than ksize when ksize > 1
+  //   if (ksize > 1) {
+  //     const corr = ksize - 1;
+  //     if (dx >= ksize) setDx(corr.toString());
+  //     if (dy >= ksize) setDy(corr.toString());
+  //   }
+  // }, [dx, onChangeDx, dy, onChangeDy, ksize]);
 
   return (
     <StyledSubMethodForm fullWidth>
@@ -49,7 +47,7 @@ const SobelEdgesPanel = () => {
             inputProps: {
               step: 1,
               min: 0,
-              max: 7,
+              max: 8,
             },
           }}
           label="Rząd pochodnej w osi X"
@@ -66,7 +64,7 @@ const SobelEdgesPanel = () => {
             inputProps: {
               step: 1,
               min: 0,
-              max: 7,
+              max: 8,
             },
           }}
           label="Rząd pochodnej w osi Y"
@@ -87,7 +85,7 @@ const SobelEdgesPanel = () => {
           inputProps: {
             step: 2,
             min: 1,
-            max: 7,
+            max: 10,
           },
         }}
         label="Wartość przekątnej (px)"

@@ -10,8 +10,6 @@ import ToggleSwitch from "../../components/ToggleSwitch";
 import { StyledSubMethodForm, StyledInputsRowWrapper } from "./styled";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
-// TODO : set step for integer numeric input
-
 const BilateralBlurPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [grayscale, toggleGrayscale] = useSwitchInputState(false);
@@ -29,7 +27,7 @@ const BilateralBlurPanel = () => {
         d: d.toString(),
       },
     });
-  }, [grayscale, d, sigmaColor, sigmaSpace]);
+  }, [grayscale, d, sigmaColor, sigmaSpace, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

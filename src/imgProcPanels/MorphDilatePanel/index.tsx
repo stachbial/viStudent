@@ -10,8 +10,6 @@ import {
   useSwitchInputState,
 } from "../../hooks/inputHooks";
 
-// TODO: checkout morphSize and secure it's input
-
 const MorphDilatePanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [grayscale, onChangeGrayscale] = useSwitchInputState(true);
@@ -31,7 +29,7 @@ const MorphDilatePanel = () => {
         morphShape: morphShape.toString(),
       },
     });
-  }, [grayscale, iterations, morphSize, morphShape]);
+  }, [grayscale, iterations, morphSize, morphShape, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

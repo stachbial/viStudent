@@ -34,7 +34,7 @@ const ThresholdBasicPanel = () => {
         typ: typ.toString(),
       },
     });
-  }, [grayscale, thresh, maxval, typ]);
+  }, [grayscale, thresh, maxval, typ, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

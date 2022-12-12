@@ -9,8 +9,6 @@ import ToggleSwitch from "../../components/ToggleSwitch";
 import { StyledSubMethodForm } from "./styled";
 import { IMG_PROC_METHODS } from "../../utils/IMG_PROC_CONSTANTS";
 
-// TODO : set step for integer numeric input
-
 const MedianBlurPanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [grayscale, toggleGrayscale] = useSwitchInputState(false);
@@ -24,7 +22,7 @@ const MedianBlurPanel = () => {
         aperture: aperture.toString(),
       },
     });
-  }, [grayscale, aperture]);
+  }, [grayscale, aperture, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

@@ -29,7 +29,7 @@ const MorphErodePanel = () => {
         morphShape: morphShape.toString(),
       },
     });
-  }, [grayscale, iterations, morphSize, morphShape]);
+  }, [grayscale, iterations, morphSize, morphShape, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>

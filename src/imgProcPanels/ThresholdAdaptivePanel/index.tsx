@@ -24,10 +24,6 @@ import {
 } from "@mui/material";
 import { StyledSubMethodForm, StyledInputsWrapper } from "./styled";
 
-// TODO: find out value ranges for blockSize and c
-// TODO: implement input debouncing
-// TODO: secure input
-
 const ThresholdAdaptivePanel = () => {
   const { processImage, isLoading } = useContext(ImageProcessingContext);
   const [maxval, onChangeMaxval] = useIntegerInputState(255, 0, 255);
@@ -51,7 +47,7 @@ const ThresholdAdaptivePanel = () => {
         adaptiveMethod: adaptiveMethod.toString(),
       },
     });
-  }, [maxval, blockSize, c, threshTyp, adaptiveMethod]);
+  }, [maxval, blockSize, c, threshTyp, adaptiveMethod, processImage]);
 
   return (
     <StyledSubMethodForm fullWidth>
